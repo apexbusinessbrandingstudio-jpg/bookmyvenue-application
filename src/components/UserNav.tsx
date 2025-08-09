@@ -1,4 +1,3 @@
-// This file uses client-side code
 'use client';
 
 import {
