@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { Header } from "@/components/Header";
@@ -170,14 +171,14 @@ export default function Home() {
                         </div>
                          <div className="flex items-center font-semibold">
                           <DollarSign className="mr-1 h-4 w-4 text-primary" />
-                          {venue.offerPrice ? (
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-accent text-lg">${venue.offerPrice}</span>
-                                <span className="line-through text-muted-foreground text-sm">${venue.price}</span>
-                            </div>
-                          ) : (
-                            <span>From ${venue.price}</span>
-                          )}
+                          <span>
+                            From ${Math.min(
+                                venue.priceDay || Infinity, 
+                                venue.priceNight || Infinity,
+                                venue.price12hr || Infinity,
+                                venue.price24hr || Infinity
+                            )}
+                          </span>
                         </div>
                       </div>
                     </CardFooter>

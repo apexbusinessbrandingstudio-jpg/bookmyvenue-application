@@ -29,8 +29,8 @@ const BookingSchema = z.object({
   guests: z.coerce.number().gt(0, { message: 'Number of guests must be positive.' }),
   message: z.string().optional(),
   userId: z.string(), // Assuming the user is logged in
-  price: z.coerce.number(), // This is now the final price (offer or regular)
-  bookingSession: z.string({ required_error: 'Please select a booking session.' }),
+  price: z.coerce.number().gt(0, { message: 'Please select a session to see the price.' }),
+  bookingSession: z.string({ required_error: 'Please select a booking session.' }).min(1, 'Please select a booking session.'),
 });
 
 export async function createBooking(prevState: State, formData: FormData) {
@@ -64,7 +64,8 @@ export async function createBooking(prevState: State, formData: FormData) {
     const q = query(bookingsRef, 
       where("venueId", "==", venueId),
       where("date", ">=", Timestamp.fromDate(startOfDay)),
-      where("date", "<", Timestamp.fromDate(endOfDay))
+      where("date", "<", Timestamp.fromDate(endOfDay)),
+      where("bookingSession", "==", bookingSession)
     );
     
     const querySnapshot = await getDocs(q);
@@ -72,9 +73,9 @@ export async function createBooking(prevState: State, formData: FormData) {
         // A more complex check would be needed here to see if the *specific session* is booked
       return {
         errors: {
-          date: ['This date is already booked. Please choose another.'],
+          date: ['This session is already booked for this date. Please choose another.'],
         },
-        message: 'Booking failed. The selected date is unavailable.',
+        message: 'Booking failed. The selected session is unavailable.',
         success: false,
       };
     }
@@ -88,7 +89,7 @@ export async function createBooking(prevState: State, formData: FormData) {
       userId,
       status: 'Pending',
       bookingSession,
-      totalAmount: price, // This now correctly reflects the price paid (offer or regular)
+      totalAmount: price, 
       createdAt: Timestamp.now(),
       // Mock data that would exist in a real venue collection
       venueName: "The Grand Meadow",

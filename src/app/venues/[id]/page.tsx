@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import * as React from "react";
@@ -38,6 +39,9 @@ import {
   CreditCard,
   Clock,
   Video,
+  Sun,
+  Moon,
+  Hourglass,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { createBooking, type State } from '@/lib/actions';
@@ -56,8 +60,10 @@ const defaultVenue = {
   type: "N/A",
   location: "N/A",
   capacity: 0,
-  price: 0,
-  offerPrice: null,
+  priceDay: null,
+  priceNight: null,
+  price12hr: null,
+  price24hr: null,
   images: [{ src: "https://placehold.co/1200x800.png", hint: "placeholder" }],
   description: "The venue you are looking for could not be found.",
   amenities: [],
@@ -91,6 +97,8 @@ export default function VenueDetailPage() {
   const [bookedDates, setBookedDates] = React.useState<Date[]>([]);
   const { user } = useAuth();
   
+  const [selectedSession, setSelectedSession] = React.useState<string | undefined>(undefined);
+  
   const initialState: State = { message: null, errors: {}, success: false };
   const [state, dispatch] = React.useActionState(createBooking, initialState);
   const { toast } = useToast();
@@ -113,11 +121,10 @@ export default function VenueDetailPage() {
   }, [venue.id]);
 
 
-  const handlePayment = () => {
-    const amountToPay = venue.offerPrice ? venue.offerPrice : venue.price;
+  const handlePayment = (price: number) => {
     const options = {
       key: "rzp_test_your_key_id", // Replace with your Test Key ID
-      amount: amountToPay * 100, // Amount in paise
+      amount: price * 100, // Amount in paise
       currency: "INR",
       name: "BOOKMYVENUE",
       description: `Booking for ${venue.name}`,
@@ -163,7 +170,13 @@ export default function VenueDetailPage() {
   }, [state, toast, date]);
   
   const disabledDates = [{ before: new Date() }, ...bookedDates];
-  const bookingPrice = venue.offerPrice || venue.price;
+  
+  let bookingPrice = 0;
+  if(selectedSession === 'day' && venue.priceDay) bookingPrice = venue.priceDay;
+  if(selectedSession === 'night' && venue.priceNight) bookingPrice = venue.priceNight;
+  if(selectedSession === '12hr' && venue.price12hr) bookingPrice = venue.price12hr;
+  if(selectedSession === '24hr' && venue.price24hr) bookingPrice = venue.price24hr;
+
 
   const amenityIcons = {
     'Free Wi-Fi': Wifi,
@@ -287,15 +300,13 @@ export default function VenueDetailPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                   <div className="flex items-baseline justify-center text-center">
-                    {venue.offerPrice ? (
-                      <div>
-                        <p className="text-muted-foreground line-through text-2xl">${venue.price}</p>
-                        <p className="text-4xl font-bold text-accent">${venue.offerPrice}<span className="text-lg font-normal text-muted-foreground">/session</span></p>
-                      </div>
-                    ) : (
-                      <p className="text-4xl font-bold">${venue.price}<span className="text-lg font-normal text-muted-foreground">/session</span></p>
-                    )}
+                   <div className="text-center">
+                     {bookingPrice > 0 ? (
+                        <p className="text-4xl font-bold text-accent">${bookingPrice}<span className="text-lg font-normal text-muted-foreground">/session</span></p>
+                     ) : (
+                        <p className="text-lg text-muted-foreground">Select a session to see the price</p>
+                     )}
+                   
                   </div>
 
                   {!user ? (
@@ -325,15 +336,43 @@ export default function VenueDetailPage() {
                       </div>
                        <div>
                         <Label>Select Session</Label>
-                        <RadioGroup defaultValue="day" name="bookingSession" className="mt-2 grid grid-cols-2 gap-4">
-                            <Label className="flex items-center gap-2 border rounded-md p-3 cursor-pointer">
-                                <RadioGroupItem value="day" id="day" />
-                                Day Event
-                            </Label>
-                             <Label className="flex items-center gap-2 border rounded-md p-3 cursor-pointer">
-                                <RadioGroupItem value="night" id="night" />
-                                Night Event
-                            </Label>
+                        <RadioGroup 
+                            name="bookingSession" 
+                            className="mt-2 grid grid-cols-2 gap-4"
+                            onValueChange={setSelectedSession}
+                            value={selectedSession}
+                        >
+                             {venue.type === 'Function Hall' || venue.type === 'Banquet Hall' ? (
+                                <>
+                                    <Label className="flex flex-col items-center gap-2 border rounded-md p-3 cursor-pointer has-[input:checked]:bg-accent has-[input:checked]:text-accent-foreground">
+                                        <RadioGroupItem value="day" id="day" className="sr-only"/>
+                                        <Sun/>
+                                        <span>Day Event</span>
+                                        {venue.priceDay && <span className="font-bold">${venue.priceDay}</span>}
+                                    </Label>
+                                    <Label className="flex flex-col items-center gap-2 border rounded-md p-3 cursor-pointer has-[input:checked]:bg-accent has-[input:checked]:text-accent-foreground">
+                                        <RadioGroupItem value="night" id="night" className="sr-only"/>
+                                        <Moon/>
+                                        <span>Night Event</span>
+                                        {venue.priceNight && <span className="font-bold">${venue.priceNight}</span>}
+                                    </Label>
+                                </>
+                             ) : venue.type === 'Farmhouse' ? (
+                                 <>
+                                    <Label className="flex flex-col items-center gap-2 border rounded-md p-3 cursor-pointer has-[input:checked]:bg-accent has-[input:checked]:text-accent-foreground">
+                                        <RadioGroupItem value="12hr" id="12hr" className="sr-only"/>
+                                        <Hourglass className="h-5 w-5"/>
+                                        <span>12 Hours</span>
+                                         {venue.price12hr && <span className="font-bold">${venue.price12hr}</span>}
+                                    </Label>
+                                    <Label className="flex flex-col items-center gap-2 border rounded-md p-3 cursor-pointer has-[input:checked]:bg-accent has-[input:checked]:text-accent-foreground">
+                                        <RadioGroupItem value="24hr" id="24hr" className="sr-only"/>
+                                        <Hourglass />
+                                        <span>24 Hours</span>
+                                        {venue.price24hr && <span className="font-bold">${venue.price24hr}</span>}
+                                    </Label>
+                                </>
+                             ) : null }
                         </RadioGroup>
                          {state.errors?.bookingSession && (
                           <p className="text-sm font-medium text-destructive pt-2">
@@ -378,7 +417,7 @@ export default function VenueDetailPage() {
                        <CheckCircle className="mx-auto h-12 w-12 text-primary" />
                        <h3 className="text-xl font-semibold">Request Sent!</h3>
                        <p className="text-muted-foreground">Your booking request has been successfully sent to the venue owner. You will be notified once it's confirmed.</p>
-                       <Button onClick={handlePayment} size="lg" className="w-full">
+                       <Button onClick={() => handlePayment(bookingPrice)} size="lg" className="w-full">
                          <CreditCard className="mr-2 h-4 w-4" />
                          Proceed to Payment
                        </Button>

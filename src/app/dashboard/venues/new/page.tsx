@@ -45,13 +45,26 @@ const formSchema = z.object({
   location: z.string().min(1, "Location is required."),
   description: z.string().min(1, "Description is required."),
   capacity: z.coerce.number().min(1, "Capacity must be at least 1."),
-  price: z.coerce.number().min(1, "Price is required."),
-  offerPrice: z.coerce.number().optional(),
+  priceDay: z.coerce.number().optional(),
+  priceNight: z.coerce.number().optional(),
+  price12hr: z.coerce.number().optional(),
+  price24hr: z.coerce.number().optional(),
   rules: z.string().optional(),
-  bookingOptions: z.string().min(1, "Booking options are required."),
   images: z.any().refine((files) => files?.length > 0, "At least one image is required."),
   video: z.any().optional(),
+}).refine(data => {
+    if (data.type === 'Farmhouse') {
+        return !!data.price12hr && !!data.price24hr;
+    }
+    if (data.type === 'Function Hall' || data.type === 'Banquet Hall') {
+        return !!data.priceDay && !!data.priceNight;
+    }
+    return true;
+}, {
+    message: "Please fill in the prices for the selected venue type.",
+    path: ["priceDay"], // can be any of the price fields
 });
+
 
 type VenueFormValues = z.infer<typeof formSchema>;
 
@@ -69,14 +82,13 @@ export default function NewVenuePage() {
       location: "",
       description: "",
       capacity: 0,
-      price: 0,
-      offerPrice: undefined,
       rules: "",
-      bookingOptions: "",
       images: undefined,
       video: undefined,
     },
   });
+
+  const venueType = form.watch("type");
 
   const onSubmit = async (values: VenueFormValues) => {
     if (!user) {
@@ -89,6 +101,13 @@ export default function NewVenuePage() {
     }
     setLoading(true);
     try {
+        let bookingOptions = "";
+        if (values.type === 'Farmhouse') {
+            bookingOptions = '12/24 Hour Slots';
+        } else if (values.type === 'Function Hall' || values.type === 'Banquet Hall') {
+            bookingOptions = 'Day/Night Events';
+        }
+
       const venuePayload: any = {
         ownerId: user.uid,
         status: 'Pending', 
@@ -98,10 +117,12 @@ export default function NewVenuePage() {
         location: values.location,
         description: values.description,
         capacity: values.capacity,
-        price: values.price,
-        offerPrice: values.offerPrice || null,
+        priceDay: values.priceDay || null,
+        priceNight: values.priceNight || null,
+        price12hr: values.price12hr || null,
+        price24hr: values.price24hr || null,
         rules: values.rules || "",
-        bookingOptions: values.bookingOptions,
+        bookingOptions: bookingOptions,
         images: [],
         amenities: [],
         videoUrl: "",
@@ -256,54 +277,67 @@ export default function NewVenuePage() {
                     )}
                   />
                   <div />
-                <FormField
-                    control={form.control}
-                    name="price"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Base Price (per day/session)</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="$" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="offerPrice"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Offer Price (Optional)</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="$" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                 {venueType === 'Function Hall' || venueType === 'Banquet Hall' ? (
+                    <>
+                        <FormField
+                            control={form.control}
+                            name="priceDay"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Day Event Price</FormLabel>
+                                <FormControl>
+                                <Input type="number" placeholder="$" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="priceNight"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Night Event Price</FormLabel>
+                                <FormControl>
+                                <Input type="number" placeholder="$" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                    </>
+                 ) : venueType === 'Farmhouse' ? (
+                     <>
+                        <FormField
+                            control={form.control}
+                            name="price12hr"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>12-Hour Slot Price</FormLabel>
+                                <FormControl>
+                                <Input type="number" placeholder="$" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="price24hr"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>24-Hour Slot Price</FormLabel>
+                                <FormControl>
+                                <Input type="number" placeholder="$" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                    </>
+                 ): null}
               </div>
-              <FormField
-                control={form.control}
-                name="bookingOptions"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Booking Options</FormLabel>
-                     <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select booking options" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Day/Night Events">Day/Night Events (Halls)</SelectItem>
-                          <SelectItem value="12/24 Hour Slots">12/24 Hour Slots (Farmhouses)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              
               <FormField
                   control={form.control}
                   name="rules"
