@@ -29,7 +29,7 @@ import { venues } from "@/lib/data";
 
 
 export default function Home() {
-    const [priceRange, setPriceRange] = React.useState([1000, 4000])
+    const [priceRange, setPriceRange] = React.useState([1000, 5000])
     const [filter, setFilter] = React.useState("All");
 
     const publishedVenues = venues.filter(v => v.status === 'Published');
@@ -67,10 +67,11 @@ export default function Home() {
             <div className="mb-12 rounded-lg border bg-card p-6 shadow-sm">
                 <div className="mb-6 text-center">
                     <h2 className="text-2xl font-headline font-semibold">Are you looking for a...</h2>
-                     <div className="mt-4 flex justify-center gap-4">
+                     <div className="mt-4 flex flex-wrap justify-center gap-4">
                         <Button variant={filter === 'All' ? 'default' : 'outline'} onClick={() => setFilter('All')}>All Venues</Button>
                         <Button variant={filter === 'Farmhouse' ? 'default' : 'outline'} onClick={() => setFilter('Farmhouse')}>Farmhouse</Button>
                         <Button variant={filter === 'Function Hall' ? 'default' : 'outline'} onClick={() => setFilter('Function Hall')}>Function Hall</Button>
+                        <Button variant={filter === 'Banquet Hall' ? 'default' : 'outline'} onClick={() => setFilter('Banquet Hall')}>Banquet Hall</Button>
                     </div>
                 </div>
 
@@ -107,6 +108,9 @@ export default function Home() {
                       <SelectItem value="Farmhouse">Farmhouse</SelectItem>
                       <SelectItem value="Function Hall">
                         Function Hall
+                      </SelectItem>
+                       <SelectItem value="Banquet Hall">
+                        Banquet Hall
                       </SelectItem>
                     </SelectContent>
                   </Select>

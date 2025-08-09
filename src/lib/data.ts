@@ -128,6 +128,34 @@ export const venues = [
     status: 'Rejected',
     image: 'https://placehold.co/600x400.png',
     hint: 'empty room',
+  },
+  {
+    id: 9,
+    name: 'The Royal Banquet',
+    type: 'Banquet Hall',
+    location: 'King\'s Landing, WE',
+    capacity: 500,
+    price: 4500,
+    status: 'Published',
+    images: [
+        { src: "https://placehold.co/1200x800.png", hint: "royal banquet"},
+        { src: "https://placehold.co/1200x800.png", hint: "banquet hall interior"},
+        { src: "https://placehold.co/1200x800.png", hint: "banquet hall dining"},
+    ],
+    description: "An exquisite banquet hall designed for royal gatherings and grand celebrations. Features opulent decor and world-class service.",
+    amenities: [
+      { name: 'Valet Parking' },
+      { name: 'In-house Catering' },
+      { name: 'Sound System' },
+      { name: 'Free Wi-Fi' },
+    ],
+    owner: {
+        name: "Cersei Lannister",
+        email: "cersei@casterlyrock.com",
+        phone: "+1 (555) 555-5555",
+    },
+    image: "https://placehold.co/600x400.png",
+    hint: "royal banquet",
   }
 ];
 
@@ -187,4 +215,3 @@ export const monthlyBookingsData = [
   { month: "May", bookings: 6 },
   { month: "Jun", bookings: 8 },
 ];
-

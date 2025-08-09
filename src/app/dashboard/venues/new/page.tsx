@@ -175,6 +175,7 @@ export default function NewVenuePage() {
                         <SelectContent>
                           <SelectItem value="Farmhouse">Farmhouse</SelectItem>
                           <SelectItem value="Function Hall">Function Hall</SelectItem>
+                          <SelectItem value="Banquet Hall">Banquet Hall</SelectItem>
                           <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
