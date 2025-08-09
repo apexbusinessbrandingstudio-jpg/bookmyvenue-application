@@ -1,3 +1,4 @@
+
 'use server';
 
 import { z } from 'zod';
@@ -12,6 +13,7 @@ export type State = {
     guests?: string[];
     message?: string[];
     userId?: string[];
+    price?: string[];
   };
   message?: string | null;
   success?: boolean;
@@ -26,6 +28,7 @@ const BookingSchema = z.object({
   guests: z.coerce.number().gt(0, { message: 'Number of guests must be positive.' }),
   message: z.string().optional(),
   userId: z.string(), // Assuming the user is logged in
+  price: z.coerce.number(),
 });
 
 export async function createBooking(prevState: State, formData: FormData) {
@@ -35,6 +38,7 @@ export async function createBooking(prevState: State, formData: FormData) {
     guests: formData.get('guests'),
     message: formData.get('message'),
     userId: formData.get('userId'),
+    price: formData.get('price'),
   });
   
   if (!validatedFields.success) {
@@ -45,7 +49,7 @@ export async function createBooking(prevState: State, formData: FormData) {
     };
   }
 
-  const { venueId, date, guests, message, userId } = validatedFields.data;
+  const { venueId, date, guests, message, userId, price } = validatedFields.data;
   
   // Normalize date to remove time part for querying
   const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -79,6 +83,7 @@ export async function createBooking(prevState: State, formData: FormData) {
       message,
       userId,
       status: 'Pending',
+      totalAmount: price, // For now, totalAmount is just the daily price
       createdAt: Timestamp.now(),
       // Mock data that would exist in a real venue collection
       venueName: "The Grand Meadow",

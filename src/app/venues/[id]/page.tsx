@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -273,6 +274,7 @@ export default function VenueDetailPage() {
                     <form ref={formRef} action={dispatch} className="space-y-4">
                       <input type="hidden" name="venueId" value={venue.id} />
                       <input type="hidden" name="userId" value={user.uid} />
+                      <input type="hidden" name="price" value={venue.price} />
                       <div>
                         <Label className="mb-2 block">Select a Date</Label>
                         <Calendar
