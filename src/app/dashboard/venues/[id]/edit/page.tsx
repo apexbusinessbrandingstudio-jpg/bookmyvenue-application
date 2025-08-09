@@ -332,7 +332,7 @@ export default function EditVenuePage() {
                             <FormItem>
                                 <FormLabel>Day Event Price</FormLabel>
                                 <FormControl>
-                                <Input type="number" placeholder="$" {...field} />
+                                <Input type="number" placeholder="₹" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -345,7 +345,7 @@ export default function EditVenuePage() {
                             <FormItem>
                                 <FormLabel>Night Event Price</FormLabel>
                                 <FormControl>
-                                <Input type="number" placeholder="$" {...field} />
+                                <Input type="number" placeholder="₹" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -361,7 +361,7 @@ export default function EditVenuePage() {
                             <FormItem>
                                 <FormLabel>12-Hour Slot Price</FormLabel>
                                 <FormControl>
-                                <Input type="number" placeholder="$" {...field} />
+                                <Input type="number" placeholder="₹" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -374,7 +374,7 @@ export default function EditVenuePage() {
                             <FormItem>
                                 <FormLabel>24-Hour Slot Price</FormLabel>
                                 <FormControl>
-                                <Input type="number" placeholder="$" {...field} />
+                                <Input type="number" placeholder="₹" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

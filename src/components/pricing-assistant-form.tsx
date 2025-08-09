@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -25,7 +26,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Loader2, Sparkles, Lightbulb, DollarSign } from "lucide-react";
+import { Loader2, Sparkles, Lightbulb, IndianRupee } from "lucide-react";
 
 const formSchema = z.object({
   venueDetails: z.string().min(1, "Venue details are required."),
@@ -193,7 +194,7 @@ export function PricingAssistantForm({
           <CardContent className="space-y-6">
             <div className="space-y-2">
               <h3 className="font-semibold text-lg flex items-center gap-2">
-                <DollarSign className="text-primary" />
+                <IndianRupee className="text-primary" />
                 Suggested Pricing
               </h3>
               <p className="rounded-md bg-secondary/50 p-4">

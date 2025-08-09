@@ -23,7 +23,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Users, DollarSign, Search } from "lucide-react";
+import { MapPin, Users, IndianRupee, Search } from "lucide-react";
 import { Slider } from "@/components/ui/slider"
 import React from "react";
 import { venues } from "@/lib/data";
@@ -118,7 +118,7 @@ export default function Home() {
                 </div>
                 <div className="md:col-span-2">
                   <label className="mb-2 block text-sm font-medium">
-                    Price Range: ${priceRange[0]} - ${priceRange[1]}
+                    Price Range: ₹{priceRange[0]} - ₹{priceRange[1]}
                   </label>
                   <Slider
                     defaultValue={priceRange}
@@ -170,9 +170,9 @@ export default function Home() {
                           <span>{venue.capacity} Guests</span>
                         </div>
                          <div className="flex items-center font-semibold">
-                          <DollarSign className="mr-1 h-4 w-4 text-primary" />
+                          <IndianRupee className="mr-1 h-4 w-4 text-primary" />
                           <span>
-                            From ${Math.min(
+                            From ₹{Math.min(
                                 venue.priceDay || Infinity, 
                                 venue.priceNight || Infinity,
                                 venue.price12hr || Infinity,

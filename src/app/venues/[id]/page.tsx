@@ -3,7 +3,6 @@
 "use client";
 
 import * as React from "react";
-import { useFormStatus } from "react-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import {
@@ -42,6 +41,7 @@ import {
   Sun,
   Moon,
   Hourglass,
+  IndianRupee,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { createBooking, type State } from '@/lib/actions';
@@ -74,7 +74,7 @@ const defaultVenue = {
 
 
 function SubmitButton() {
-  const { pending } = useFormStatus();
+  const { pending } = React.useFormStatus();
 
   return (
     <Button
@@ -302,7 +302,7 @@ export default function VenueDetailPage() {
                 <CardContent className="space-y-6">
                    <div className="text-center">
                      {bookingPrice > 0 ? (
-                        <p className="text-4xl font-bold text-accent">${bookingPrice}<span className="text-lg font-normal text-muted-foreground">/session</span></p>
+                        <p className="text-4xl font-bold text-accent">₹{bookingPrice}<span className="text-lg font-normal text-muted-foreground">/session</span></p>
                      ) : (
                         <p className="text-lg text-muted-foreground">Select a session to see the price</p>
                      )}
@@ -348,13 +348,13 @@ export default function VenueDetailPage() {
                                         <RadioGroupItem value="day" id="day" className="sr-only"/>
                                         <Sun/>
                                         <span>Day Event</span>
-                                        {venue.priceDay && <span className="font-bold">${venue.priceDay}</span>}
+                                        {venue.priceDay && <span className="font-bold">₹{venue.priceDay}</span>}
                                     </Label>
                                     <Label className="flex flex-col items-center gap-2 border rounded-md p-3 cursor-pointer has-[input:checked]:bg-accent has-[input:checked]:text-accent-foreground">
                                         <RadioGroupItem value="night" id="night" className="sr-only"/>
                                         <Moon/>
                                         <span>Night Event</span>
-                                        {venue.priceNight && <span className="font-bold">${venue.priceNight}</span>}
+                                        {venue.priceNight && <span className="font-bold">₹{venue.priceNight}</span>}
                                     </Label>
                                 </>
                              ) : venue.type === 'Farmhouse' ? (
@@ -363,13 +363,13 @@ export default function VenueDetailPage() {
                                         <RadioGroupItem value="12hr" id="12hr" className="sr-only"/>
                                         <Hourglass className="h-5 w-5"/>
                                         <span>12 Hours</span>
-                                         {venue.price12hr && <span className="font-bold">${venue.price12hr}</span>}
+                                         {venue.price12hr && <span className="font-bold">₹{venue.price12hr}</span>}
                                     </Label>
                                     <Label className="flex flex-col items-center gap-2 border rounded-md p-3 cursor-pointer has-[input:checked]:bg-accent has-[input:checked]:text-accent-foreground">
                                         <RadioGroupItem value="24hr" id="24hr" className="sr-only"/>
                                         <Hourglass />
                                         <span>24 Hours</span>
-                                        {venue.price24hr && <span className="font-bold">${venue.price24hr}</span>}
+                                        {venue.price24hr && <span className="font-bold">₹{venue.price24hr}</span>}
                                     </Label>
                                 </>
                              ) : null }
