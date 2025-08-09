@@ -35,7 +35,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2, Trash2, Video } from "lucide-react";
 import { db } from "@/lib/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { uploadFile } from "@/lib/storage";
@@ -59,6 +59,8 @@ const formSchema = z.object({
     )
     .min(1, "At least one image is required."),
   newImages: z.any().optional(),
+  videoUrl: z.string().optional(),
+  newVideo: z.any().optional(),
 });
 
 type VenueFormValues = z.infer<typeof formSchema>;
@@ -83,6 +85,7 @@ export default function EditVenuePage() {
       rules: "",
       bookingOptions: "",
       images: [],
+      videoUrl: "",
     },
   });
 
@@ -129,20 +132,27 @@ export default function EditVenuePage() {
   const onSubmit = async (values: VenueFormValues) => {
     setLoading(true);
     try {
-      const { newImages, ...venueData } = values;
+      const { newImages, newVideo, ...venueData } = values;
       const imageUrls = [...venueData.images];
+      let videoUrl = venueData.videoUrl || "";
 
       if (newImages && newImages.length > 0) {
         for (const file of Array.from(newImages as FileList)) {
-          const url = await uploadFile(file as File, `venues/${venueId}`);
+          const url = await uploadFile(file as File, `venues/${venueId}/images`);
           imageUrls.push({ src: url, hint: "new venue image" });
         }
+      }
+
+      if (newVideo && newVideo.length > 0) {
+        const videoFile = newVideo[0];
+        videoUrl = await uploadFile(videoFile, `venues/${venueId}/video`);
       }
       
       const venueRef = doc(db, "venues", venueId);
       await updateDoc(venueRef, {
         ...venueData,
         images: imageUrls,
+        videoUrl: videoUrl,
       });
 
       toast({
@@ -385,6 +395,52 @@ export default function EditVenuePage() {
                       <Input
                         type="file"
                         multiple
+                        accept="image/*"
+                        onChange={(e) => field.onChange(e.target.files)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Separator />
+
+               <div>
+                 <Label>Current Video</Label>
+                 {form.watch("videoUrl") ? (
+                    <div className="mt-2 relative">
+                        <video src={form.getValues("videoUrl")} controls className="w-full max-w-md rounded-md" />
+                         <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            className="mt-2"
+                            onClick={() => form.setValue("videoUrl", "")}
+                         >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Remove Video
+                        </Button>
+                    </div>
+                 ) : (
+                    <div className="mt-2 text-sm text-muted-foreground flex items-center gap-2 border rounded-md p-4 max-w-md">
+                        <Video className="h-5 w-5"/>
+                        No video uploaded yet.
+                    </div>
+                 )}
+              </div>
+
+
+              <FormField
+                control={form.control}
+                name="newVideo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Upload New Video</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        accept="video/*"
                         onChange={(e) => field.onChange(e.target.files)}
                       />
                     </FormControl>

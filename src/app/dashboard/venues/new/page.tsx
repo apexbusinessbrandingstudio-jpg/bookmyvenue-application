@@ -49,6 +49,7 @@ const formSchema = z.object({
   rules: z.string().optional(),
   bookingOptions: z.string().min(1, "Booking options are required."),
   images: z.any().refine((files) => files?.length > 0, "At least one image is required."),
+  video: z.any().optional(),
 });
 
 type VenueFormValues = z.infer<typeof formSchema>;
@@ -71,6 +72,7 @@ export default function NewVenuePage() {
       rules: "",
       bookingOptions: "",
       images: undefined,
+      video: undefined,
     },
   });
 
@@ -85,9 +87,9 @@ export default function NewVenuePage() {
     }
     setLoading(true);
     try {
-      const venuePayload = {
+      const venuePayload: any = {
         ownerId: user.uid,
-        status: 'Pending', // <-- Set status to Pending
+        status: 'Pending', 
         createdAt: serverTimestamp(),
         name: values.name,
         type: values.type,
@@ -99,6 +101,7 @@ export default function NewVenuePage() {
         bookingOptions: values.bookingOptions,
         images: [],
         amenities: [],
+        videoUrl: "",
       };
 
       // 1. Create a new venue document to get an ID
@@ -109,12 +112,19 @@ export default function NewVenuePage() {
       // 2. Upload images to Firebase Storage
       const imageUrls = [];
       for (const file of Array.from(values.images as FileList)) {
-        const url = await uploadFile(file, `venues/${venueId}`);
+        const url = await uploadFile(file, `venues/${venueId}/images`);
         imageUrls.push({ src: url, hint: "new venue image" });
       }
 
-      // 3. Update the venue document with the image URLs
-       await updateDoc(doc(db, "venues", venueId), { images: imageUrls });
+      // 3. Upload video if it exists
+      let videoUrl = "";
+      if (values.video && values.video.length > 0) {
+        const videoFile = values.video[0];
+        videoUrl = await uploadFile(videoFile, `venues/${venueId}/video`);
+      }
+
+      // 4. Update the venue document with the media URLs
+       await updateDoc(doc(db, "venues", venueId), { images: imageUrls, videoUrl: videoUrl });
       
 
       toast({
@@ -299,7 +309,7 @@ export default function NewVenuePage() {
             
             <Separator />
 
-            <div className="space-y-2">
+            <div className="space-y-4">
               <h3 className="text-lg font-medium font-headline">Media</h3>
               <FormField
                 control={form.control}
@@ -317,6 +327,26 @@ export default function NewVenuePage() {
                     </FormControl>
                     <p className="text-sm text-muted-foreground">
                       Select one or more images of your venue.
+                    </p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="video"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Upload Venue Video</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="file" 
+                        accept="video/*"
+                        onChange={(e) => field.onChange(e.target.files)}
+                      />
+                    </FormControl>
+                     <p className="text-sm text-muted-foreground">
+                      Upload a short video of your venue (optional).
                     </p>
                     <FormMessage />
                   </FormItem>

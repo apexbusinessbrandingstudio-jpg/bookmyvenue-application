@@ -10,6 +10,7 @@ export const venues = [
     price: 1500,
     status: 'Published',
     bookingOptions: '12/24 Hour Slots',
+    videoUrl: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4',
     images: [
       {
         src: 'https://placehold.co/1200x800.png',
@@ -49,6 +50,7 @@ export const venues = [
     price: 2500,
     status: 'Published',
     bookingOptions: 'Day/Night Events',
+    videoUrl: '',
     images: [
         { src: "https://placehold.co/1200x800.png", hint: "ballroom wedding"},
         { src: "https://placehold.co/1200x800.png", hint: "ballroom interior"},
@@ -78,6 +80,7 @@ export const venues = [
     price: 3000,
     status: 'Published',
     bookingOptions: '12/24 Hour Slots',
+    videoUrl: '',
     image: 'https://placehold.co/600x400.png',
     hint: 'manor exterior',
   },
@@ -90,6 +93,7 @@ export const venues = [
     price: 1800,
     status: 'Pending', // Changed to Pending
     bookingOptions: 'Day/Night Events',
+    videoUrl: '',
     image: 'https://placehold.co/600x400.png',
     hint: 'loft interior',
   },
@@ -102,6 +106,7 @@ export const venues = [
     price: 2200,
     status: 'Published',
     bookingOptions: '12/24 Hour Slots',
+    videoUrl: '',
     image: 'https://placehold.co/600x400.png',
     hint: 'lake house',
   },
@@ -114,6 +119,7 @@ export const venues = [
     price: 4000,
     status: 'Published',
     bookingOptions: 'Day/Night Events',
+    videoUrl: '',
     image: 'https://placehold.co/600x400.png',
     hint: 'pavilion night',
   },
@@ -124,6 +130,7 @@ export const venues = [
     location: 'City Center',
     status: 'Pending', // Changed to Pending
     bookingOptions: 'Day/Night Events',
+    videoUrl: '',
     image: 'https://placehold.co/600x400.png',
     hint: 'modern hall',
   },
@@ -134,6 +141,7 @@ export const venues = [
     location: 'Nowhere',
     status: 'Rejected',
     bookingOptions: 'N/A',
+    videoUrl: '',
     image: 'https://placehold.co/600x400.png',
     hint: 'empty room',
   },
@@ -146,6 +154,7 @@ export const venues = [
     price: 4500,
     status: 'Published',
     bookingOptions: 'Day/Night Events',
+    videoUrl: '',
     images: [
         { src: "https://placehold.co/1200x800.png", hint: "royal banquet"},
         { src: "https://placehold.co/1200x800.png", hint: "banquet hall interior"},

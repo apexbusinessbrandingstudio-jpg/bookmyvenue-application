@@ -37,6 +37,7 @@ import {
   Phone,
   CreditCard,
   Clock,
+  Video,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { createBooking, type State } from '@/lib/actions';
@@ -44,7 +45,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { db } from "@/lib/firebase";
 import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
-import { venues } from "@/lib/data";
+import { venues as staticVenues } from "@/lib/data";
 import { useParams } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
@@ -60,7 +61,8 @@ const defaultVenue = {
   description: "The venue you are looking for could not be found.",
   amenities: [],
   owner: { name: "N/A", email: "", phone: "" },
-  bookingOptions: "N/A"
+  bookingOptions: "N/A",
+  videoUrl: ""
 };
 
 
@@ -82,7 +84,7 @@ function SubmitButton() {
 export default function VenueDetailPage() {
   const params = useParams();
   const venueId = Number(params.id);
-  const venue = venues.find((v) => v.id === venueId) || defaultVenue;
+  const venue = staticVenues.find((v) => v.id === venueId) || defaultVenue;
 
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [bookedDates, setBookedDates] = React.useState<Date[]>([]);
@@ -214,6 +216,20 @@ export default function VenueDetailPage() {
               <p className="mt-6 text-lg">{venue.description}</p>
               
               <Separator className="my-8" />
+              
+              {venue.videoUrl && (
+                  <>
+                    <h2 className="mb-4 font-headline text-2xl font-bold flex items-center gap-2">
+                      <Video />
+                      Venue Video
+                    </h2>
+                    <div className="mb-8 overflow-hidden rounded-lg shadow-lg">
+                       <video src={venue.videoUrl} controls className="w-full" />
+                    </div>
+                    <Separator className="my-8" />
+                  </>
+              )}
+
 
               <h2 className="mb-4 font-headline text-2xl font-bold">
                 Amenities

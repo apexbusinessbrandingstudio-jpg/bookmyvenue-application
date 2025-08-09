@@ -15,7 +15,9 @@ export const uploadFile = async (file: File, path: string): Promise<string> => {
     throw new Error('No file provided for upload.');
   }
 
-  const fileRef = ref(storage, `${path}/${file.name}`);
+  // Use a timestamp or a unique id in the filename to avoid overwrites
+  const uniqueFileName = `${Date.now()}-${file.name}`;
+  const fileRef = ref(storage, `${path}/${uniqueFileName}`);
   
   try {
     const snapshot = await uploadBytes(fileRef, file);
