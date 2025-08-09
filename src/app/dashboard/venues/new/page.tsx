@@ -47,6 +47,7 @@ const formSchema = z.object({
   capacity: z.coerce.number().min(1, "Capacity must be at least 1."),
   price: z.coerce.number().min(1, "Price is required."),
   rules: z.string().optional(),
+  bookingOptions: z.string().min(1, "Booking options are required."),
   images: z.any().refine((files) => files?.length > 0, "At least one image is required."),
 });
 
@@ -68,6 +69,7 @@ export default function NewVenuePage() {
       capacity: 0,
       price: 0,
       rules: "",
+      bookingOptions: "",
       images: undefined,
     },
   });
@@ -94,6 +96,7 @@ export default function NewVenuePage() {
         capacity: values.capacity,
         price: values.price,
         rules: values.rules || "",
+        bookingOptions: values.bookingOptions,
         images: [],
         amenities: [],
       };
@@ -244,7 +247,7 @@ export default function NewVenuePage() {
                     name="price"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Base Price (per day)</FormLabel>
+                        <FormLabel>Base Price (per day/session)</FormLabel>
                         <FormControl>
                           <Input type="number" placeholder="$" {...field} />
                         </FormControl>
@@ -253,6 +256,27 @@ export default function NewVenuePage() {
                     )}
                   />
               </div>
+              <FormField
+                control={form.control}
+                name="bookingOptions"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Booking Options</FormLabel>
+                     <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select booking options" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Day/Night Events">Day/Night Events (Halls)</SelectItem>
+                          <SelectItem value="12/24 Hour Slots">12/24 Hour Slots (Farmhouses)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                   control={form.control}
                   name="rules"

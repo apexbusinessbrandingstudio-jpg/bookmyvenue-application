@@ -49,6 +49,7 @@ const formSchema = z.object({
   capacity: z.coerce.number().min(1, "Capacity must be at least 1."),
   price: z.coerce.number().min(1, "Price is required."),
   rules: z.string().optional(),
+  bookingOptions: z.string().min(1, "Booking options are required."),
   images: z
     .array(
       z.object({
@@ -80,6 +81,7 @@ export default function EditVenuePage() {
       capacity: 0,
       price: 0,
       rules: "",
+      bookingOptions: "",
       images: [],
     },
   });
@@ -288,7 +290,7 @@ export default function EditVenuePage() {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Base Price (per day)</FormLabel>
+                      <FormLabel>Base Price (per day/session)</FormLabel>
                       <FormControl>
                         <Input type="number" placeholder="$" {...field} />
                       </FormControl>
@@ -297,6 +299,27 @@ export default function EditVenuePage() {
                   )}
                 />
               </div>
+               <FormField
+                control={form.control}
+                name="bookingOptions"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Booking Options</FormLabel>
+                     <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select booking options" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Day/Night Events">Day/Night Events (Halls)</SelectItem>
+                          <SelectItem value="12/24 Hour Slots">12/24 Hour Slots (Farmhouses)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="rules"

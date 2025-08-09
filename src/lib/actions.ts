@@ -14,6 +14,7 @@ export type State = {
     message?: string[];
     userId?: string[];
     price?: string[];
+    bookingSession?: string[];
   };
   message?: string | null;
   success?: boolean;
@@ -29,6 +30,7 @@ const BookingSchema = z.object({
   message: z.string().optional(),
   userId: z.string(), // Assuming the user is logged in
   price: z.coerce.number(),
+  bookingSession: z.string({ required_error: 'Please select a booking session.' }),
 });
 
 export async function createBooking(prevState: State, formData: FormData) {
@@ -39,6 +41,7 @@ export async function createBooking(prevState: State, formData: FormData) {
     message: formData.get('message'),
     userId: formData.get('userId'),
     price: formData.get('price'),
+    bookingSession: formData.get('bookingSession'),
   });
   
   if (!validatedFields.success) {
@@ -49,14 +52,14 @@ export async function createBooking(prevState: State, formData: FormData) {
     };
   }
 
-  const { venueId, date, guests, message, userId, price } = validatedFields.data;
+  const { venueId, date, guests, message, userId, price, bookingSession } = validatedFields.data;
   
   // Normalize date to remove time part for querying
   const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   const endOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
 
   try {
-     // Check for booking conflicts
+     // Check for booking conflicts (simplified check, doesn't account for session yet)
     const bookingsRef = collection(db, "bookings");
     const q = query(bookingsRef, 
       where("venueId", "==", venueId),
@@ -66,6 +69,7 @@ export async function createBooking(prevState: State, formData: FormData) {
     
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
+        // A more complex check would be needed here to see if the *specific session* is booked
       return {
         errors: {
           date: ['This date is already booked. Please choose another.'],
@@ -83,6 +87,7 @@ export async function createBooking(prevState: State, formData: FormData) {
       message,
       userId,
       status: 'Pending',
+      bookingSession,
       totalAmount: price, // For now, totalAmount is just the daily price
       createdAt: Timestamp.now(),
       // Mock data that would exist in a real venue collection

@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -35,6 +36,7 @@ import {
   Mail,
   Phone,
   CreditCard,
+  Clock,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { createBooking, type State } from '@/lib/actions';
@@ -44,6 +46,7 @@ import { db } from "@/lib/firebase";
 import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
 import { venues } from "@/lib/data";
 import { useParams } from "next/navigation";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 
 const defaultVenue = {
@@ -57,6 +60,7 @@ const defaultVenue = {
   description: "The venue you are looking for could not be found.",
   amenities: [],
   owner: { name: "N/A", email: "", phone: "" },
+  bookingOptions: "N/A"
 };
 
 
@@ -203,6 +207,10 @@ export default function VenueDetailPage() {
                 <MapPin className="mr-2 h-5 w-5" />
                 {venue.location}
               </div>
+              <div className="mt-4 flex items-center text-md text-muted-foreground">
+                <Clock className="mr-2 h-5 w-5" />
+                {venue.bookingOptions}
+              </div>
               <p className="mt-6 text-lg">{venue.description}</p>
               
               <Separator className="my-8" />
@@ -262,7 +270,7 @@ export default function VenueDetailPage() {
                 <CardContent className="space-y-6">
                   <div className="flex items-baseline justify-center">
                     <span className="text-4xl font-bold">${venue.price}</span>
-                    <span className="text-muted-foreground">/day</span>
+                    <span className="text-muted-foreground">/session</span>
                   </div>
 
                   {!user ? (
@@ -287,6 +295,24 @@ export default function VenueDetailPage() {
                            {state.errors?.date && (
                           <p className="text-sm font-medium text-destructive pt-2">
                            {state.errors.date[0]}
+                          </p>
+                        )}
+                      </div>
+                       <div>
+                        <Label>Select Session</Label>
+                        <RadioGroup defaultValue="day" name="bookingSession" className="mt-2 grid grid-cols-2 gap-4">
+                            <Label className="flex items-center gap-2 border rounded-md p-3 cursor-pointer">
+                                <RadioGroupItem value="day" id="day" />
+                                Day Event
+                            </Label>
+                             <Label className="flex items-center gap-2 border rounded-md p-3 cursor-pointer">
+                                <RadioGroupItem value="night" id="night" />
+                                Night Event
+                            </Label>
+                        </RadioGroup>
+                         {state.errors?.bookingSession && (
+                          <p className="text-sm font-medium text-destructive pt-2">
+                            {state.errors.bookingSession[0]}
                           </p>
                         )}
                       </div>

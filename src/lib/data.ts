@@ -9,6 +9,7 @@ export const venues = [
     capacity: 2000000,
     price: 1500,
     status: 'Published',
+    bookingOptions: '12/24 Hour Slots',
     images: [
       {
         src: 'https://placehold.co/1200x800.png',
@@ -47,6 +48,7 @@ export const venues = [
     capacity: 3000000,
     price: 2500,
     status: 'Published',
+    bookingOptions: 'Day/Night Events',
     images: [
         { src: "https://placehold.co/1200x800.png", hint: "ballroom wedding"},
         { src: "https://placehold.co/1200x800.png", hint: "ballroom interior"},
@@ -75,6 +77,7 @@ export const venues = [
     capacity: 1500000,
     price: 3000,
     status: 'Published',
+    bookingOptions: '12/24 Hour Slots',
     image: 'https://placehold.co/600x400.png',
     hint: 'manor exterior',
   },
@@ -86,6 +89,7 @@ export const venues = [
     capacity: 100,
     price: 1800,
     status: 'Pending', // Changed to Pending
+    bookingOptions: 'Day/Night Events',
     image: 'https://placehold.co/600x400.png',
     hint: 'loft interior',
   },
@@ -97,6 +101,7 @@ export const venues = [
     capacity: 80,
     price: 2200,
     status: 'Published',
+    bookingOptions: '12/24 Hour Slots',
     image: 'https://placehold.co/600x400.png',
     hint: 'lake house',
   },
@@ -108,6 +113,7 @@ export const venues = [
     capacity: 5000000,
     price: 4000,
     status: 'Published',
+    bookingOptions: 'Day/Night Events',
     image: 'https://placehold.co/600x400.png',
     hint: 'pavilion night',
   },
@@ -117,6 +123,7 @@ export const venues = [
     type: 'Function Hall',
     location: 'City Center',
     status: 'Pending', // Changed to Pending
+    bookingOptions: 'Day/Night Events',
     image: 'https://placehold.co/600x400.png',
     hint: 'modern hall',
   },
@@ -126,6 +133,7 @@ export const venues = [
     type: 'Other',
     location: 'Nowhere',
     status: 'Rejected',
+    bookingOptions: 'N/A',
     image: 'https://placehold.co/600x400.png',
     hint: 'empty room',
   },
@@ -137,6 +145,7 @@ export const venues = [
     capacity: 500,
     price: 4500,
     status: 'Published',
+    bookingOptions: 'Day/Night Events',
     images: [
         { src: "https://placehold.co/1200x800.png", hint: "royal banquet"},
         { src: "https://placehold.co/1200x800.png", hint: "banquet hall interior"},
