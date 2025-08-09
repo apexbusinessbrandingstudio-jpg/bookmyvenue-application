@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Header } from "@/components/Header";
@@ -29,6 +30,7 @@ import { venues } from "@/lib/data";
 
 export default function Home() {
     const [priceRange, setPriceRange] = React.useState([1000, 4000])
+    const publishedVenues = venues.filter(v => v.status === 'Published');
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -37,7 +39,7 @@ export default function Home() {
         <section
           className="relative flex h-[50vh] max-h-[560px] items-center justify-center bg-cover bg-center text-center"
           style={{ backgroundImage: "url('https://placehold.co/1600x600.png')" }}
-          data-ai-hint="wedding reception"
+          data-ai-hint="indian wedding"
         >
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="relative
@@ -111,7 +113,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {venues.map((venue) => (
+              {publishedVenues.map((venue) => (
                 <Card
                   key={venue.id}
                   className="overflow-hidden shadow-md transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1"

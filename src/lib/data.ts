@@ -1,4 +1,5 @@
 
+
 export const venues = [
   {
     id: 1,
@@ -84,7 +85,7 @@ export const venues = [
     location: 'Downtown, LA',
     capacity: 100,
     price: 1800,
-    status: 'Draft',
+    status: 'Pending', // Changed to Pending
     image: 'https://placehold.co/600x400.png',
     hint: 'loft interior',
   },
@@ -115,10 +116,19 @@ export const venues = [
     name: 'My New Hall',
     type: 'Function Hall',
     location: 'City Center',
-    status: 'Draft',
+    status: 'Pending', // Changed to Pending
     image: 'https://placehold.co/600x400.png',
     hint: 'modern hall',
   },
+  {
+    id: 8,
+    name: 'Rejected Venue',
+    type: 'Other',
+    location: 'Nowhere',
+    status: 'Rejected',
+    image: 'https://placehold.co/600x400.png',
+    hint: 'empty room',
+  }
 ];
 
 export const bookings = [

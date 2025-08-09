@@ -1,3 +1,6 @@
+
+"use client";
+
 import {
   Card,
   CardFooter,
@@ -9,20 +12,41 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Edit, Bot, View } from "lucide-react";
-import { venues as myVenues } from "@/lib/data";
+import { Plus, Edit, Bot, View, ShieldCheck } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { venues as myVenues } from "@/lib/data"; // Using seed data for now
+
+// A simple hardcoded check for admin UID. 
+// In a real app, this would be a more robust role-based access control system.
+const ADMIN_UID = "REPLACE_WITH_YOUR_ADMIN_UID"; 
 
 export default function MyVenuesPage() {
+  const { user } = useAuth();
+  const isAdmin = user && user.uid === ADMIN_UID;
+
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-4xl font-bold font-headline">My Venues</h1>
-        <Button asChild>
-          <Link href="/dashboard/venues/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Add New Venue
-          </Link>
-        </Button>
+        <div>
+          <h1 className="text-4xl font-bold font-headline">My Venues</h1>
+          <p className="text-muted-foreground">Manage your property listings.</p>
+        </div>
+        <div className="flex gap-2">
+           {isAdmin && (
+            <Button asChild variant="secondary">
+              <Link href="/dashboard/venues/approval">
+                <ShieldCheck className="mr-2 h-4 w-4" />
+                Approval List
+              </Link>
+            </Button>
+          )}
+          <Button asChild>
+            <Link href="/dashboard/venues/new">
+              <Plus className="mr-2 h-4 w-4" />
+              Add New Venue
+            </Link>
+          </Button>
+        </div>
       </div>
       <div className="grid gap-6">
         {myVenues.map((venue) => (
@@ -49,7 +73,7 @@ export default function MyVenuesPage() {
                     </div>
                     <Badge
                       variant={
-                        venue.status === "Published" ? "default" : "secondary"
+                        venue.status === "Published" ? "default" : venue.status === 'Pending' ? 'secondary' : 'destructive'
                       }
                       className={venue.status === "Published" ? "bg-primary text-primary-foreground" : ""}
                     >
@@ -68,11 +92,13 @@ export default function MyVenuesPage() {
                       <Bot className="mr-2 h-4 w-4" /> AI Pricing
                     </Link>
                   </Button>
-                  <Button asChild size="sm" variant="ghost">
-                    <Link href={`/venues/${venue.id}`}>
-                      <View className="mr-2 h-4 w-4" /> View Listing
-                    </Link>
-                  </Button>
+                  {venue.status === 'Published' && (
+                     <Button asChild size="sm" variant="ghost">
+                        <Link href={`/venues/${venue.id}`}>
+                          <View className="mr-2 h-4 w-4" /> View Listing
+                        </Link>
+                      </Button>
+                  )}
                 </CardFooter>
               </div>
             </div>

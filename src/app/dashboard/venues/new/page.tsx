@@ -36,7 +36,7 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, updateDoc } from "firebase/firestore";
 import { uploadFile } from "@/lib/storage";
 
 const formSchema = z.object({
@@ -83,12 +83,10 @@ export default function NewVenuePage() {
     }
     setLoading(true);
     try {
-      // 1. Create a new venue document to get an ID
-      const newVenueRef = await addDoc(collection(db, "venues"), {
+      const venuePayload = {
         ownerId: user.uid,
-        status: 'Draft',
+        status: 'Pending', // <-- Set status to Pending
         createdAt: serverTimestamp(),
-        // Add other fields with empty/default values for now
         name: values.name,
         type: values.type,
         location: values.location,
@@ -96,9 +94,12 @@ export default function NewVenuePage() {
         capacity: values.capacity,
         price: values.price,
         rules: values.rules || "",
-        images: [], // will be populated after upload
-        amenities: [], // Add a default amenities array if needed
-      });
+        images: [],
+        amenities: [],
+      };
+
+      // 1. Create a new venue document to get an ID
+      const newVenueRef = await addDoc(collection(db, "venues"), venuePayload);
       
       const venueId = newVenueRef.id;
 
@@ -110,7 +111,7 @@ export default function NewVenuePage() {
       }
 
       // 3. Update the venue document with the image URLs
-       await db.collection("venues").doc(venueId).update({ images: imageUrls });
+       await updateDoc(doc(db, "venues", venueId), { images: imageUrls });
       
 
       toast({
