@@ -48,7 +48,10 @@ import {
   Users2,
   Speaker,
   Flower2,
-  PersonStanding
+  PersonStanding,
+  Beef,
+  Vegan,
+  Drumstick
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { createBooking, type State } from '@/lib/actions';
@@ -56,9 +59,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { db } from "@/lib/firebase";
 import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
-import { venues as staticVenues, availableAmenities } from "@/lib/data";
+import { venues as staticVenues, availableAmenities, menuOptions } from "@/lib/data";
 import { useParams } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 const defaultVenue = {
@@ -74,6 +78,7 @@ const defaultVenue = {
   images: [{ src: "https://placehold.co/1200x800.png", hint: "placeholder" }],
   description: "The venue you are looking for could not be found.",
   amenities: [],
+  menuOptions: [],
   owner: { name: "N/A", email: "", phone: "" },
   bookingOptions: "N/A",
   videoUrl: ""
@@ -206,8 +211,18 @@ export default function VenueDetailPage() {
     'dressing-room': PersonStanding,
   };
   
+  const menuIcons: { [key: string]: React.ElementType } = {
+      'veg': Vegan,
+      'non-veg': Drumstick,
+      'beef': Beef
+  };
+
   const getAmenityDetails = (amenityId: string) => {
       return availableAmenities.find(a => a.id === amenityId);
+  }
+  
+  const getMenuOptionDetails = (optionId: string) => {
+      return menuOptions.find(o => o.id === optionId);
   }
 
   return (
@@ -286,6 +301,26 @@ export default function VenueDetailPage() {
               </div>
               
               <Separator className="my-8" />
+              
+              <h2 className="mb-4 font-headline text-2xl font-bold">
+                Menu Options
+              </h2>
+              <div className="grid grid-cols-2 gap-4">
+                {(venue.menuOptions || []).map((optionId) => {
+                  const option = getMenuOptionDetails(optionId);
+                  if (!option) return null;
+                  const Icon = menuIcons[option.id] || UtensilsCrossed;
+                  return (
+                    <div key={option.id} className="flex items-center">
+                      <Icon className="mr-3 h-5 w-5 text-primary" />
+                      <span>{option.name}</span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <Separator className="my-8" />
+
 
               <h2 className="mb-4 font-headline text-2xl font-bold">
                 Contact Owner
@@ -403,6 +438,26 @@ export default function VenueDetailPage() {
                           </p>
                         )}
                       </div>
+                       <div>
+                         <Label htmlFor="menuPreference">Menu Preference</Label>
+                          <Select name="menuPreference">
+                            <SelectTrigger id="menuPreference">
+                              <SelectValue placeholder="Select a menu type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {(venue.menuOptions || []).map(optionId => {
+                                    const option = getMenuOptionDetails(optionId);
+                                    if (!option) return null;
+                                    return <SelectItem key={option.id} value={option.id}>{option.name}</SelectItem>
+                                })}
+                            </SelectContent>
+                          </Select>
+                          {state.errors?.menuPreference && (
+                            <p className="text-sm font-medium text-destructive pt-2">
+                                {state.errors.menuPreference[0]}
+                            </p>
+                           )}
+                       </div>
                       <div>
                         <Label htmlFor="guests">Number of Guests</Label>
                         <Input

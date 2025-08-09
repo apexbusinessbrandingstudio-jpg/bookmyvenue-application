@@ -15,6 +15,13 @@ export const availableAmenities = [
   { id: 'dressing-room', name: 'Dressing Room' },
 ];
 
+export const menuOptions = [
+    { id: 'veg', name: 'Veg' },
+    { id: 'non-veg', name: 'Non-Veg' },
+    { id: 'beef', name: 'Beef' },
+];
+
+
 export const venues = [
   {
     id: 1,
@@ -44,6 +51,7 @@ export const venues = [
     description:
       'A beautiful farmhouse set in acres of lush green meadows, perfect for weddings and corporate retreats. The Grand Meadow offers a serene escape from the city with modern amenities and breathtaking views.',
     amenities: ['wifi', 'parking', 'catering', 'ac', 'lift', 'dressing-room'],
+    menuOptions: ['veg', 'non-veg'],
     owner: {
       name: 'Jane Doe',
       email: 'jane.doe@grandmeadow.com',
@@ -70,6 +78,7 @@ export const venues = [
     ],
     description: "A stunning ballroom with crystal chandeliers and a grand staircase, ideal for lavish weddings and formal events.",
     amenities: ['valet-parking', 'in-house-decor', 'bridal-suite', 'sound-system', 'lift'],
+    menuOptions: ['veg', 'non-veg', 'beef'],
     owner: {
         name: "John Smith",
         email: "john.smith@crystalballroom.com",
@@ -97,6 +106,7 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: 'manor interior'},
     ],
     amenities: ['wifi', 'parking', 'ac', 'tv'],
+    menuOptions: ['veg'],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'An elegant manor surrounded by ancient oak trees.'
   },
@@ -119,6 +129,7 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: 'loft bar'},
     ],
     amenities: ['wifi', 'ac', 'sound-system'],
+    menuOptions: ['non-veg', 'beef'],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'A modern and chic loft space for intimate events.'
   },
@@ -141,6 +152,7 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: 'house interior'},
     ],
     amenities: ['wifi', 'parking', 'refrigerator'],
+    menuOptions: ['veg', 'non-veg'],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'A cozy retreat with stunning views of the lake.'
   },
@@ -163,6 +175,7 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: 'pavilion lights'},
     ],
     amenities: ['parking', 'sound-system', 'in-house-decor'],
+    menuOptions: ['veg', 'non-veg'],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'A grand pavilion perfect for large-scale events under the stars.'
   },
@@ -185,6 +198,7 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: 'hall seating'},
     ],
     amenities: [],
+    menuOptions: [],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'A newly renovated hall in the heart of the city.'
   },
@@ -206,6 +220,7 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: 'blank space'},
     ],
     amenities: [],
+    menuOptions: [],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'This venue submission was not approved.'
   },
@@ -227,6 +242,7 @@ export const venues = [
     ],
     description: "An exquisite banquet hall designed for royal gatherings and grand celebrations. Features opulent decor and world-class service.",
     amenities: ['valet-parking', 'in-house-decor', 'sound-system', 'wifi'],
+    menuOptions: ['veg', 'non-veg', 'beef'],
     owner: {
         name: "Cersei Lannister",
         email: "cersei@casterlyrock.com",

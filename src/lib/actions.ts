@@ -15,6 +15,7 @@ export type State = {
     userId?: string[];
     price?: string[];
     bookingSession?: string[];
+    menuPreference?: string[];
   };
   message?: string | null;
   success?: boolean;
@@ -31,6 +32,7 @@ const BookingSchema = z.object({
   userId: z.string(), // Assuming the user is logged in
   price: z.coerce.number().gt(0, { message: 'Please select a session to see the price.' }),
   bookingSession: z.string({ required_error: 'Please select a booking session.' }).min(1, 'Please select a booking session.'),
+  menuPreference: z.string().optional(),
 });
 
 export async function createBooking(prevState: State, formData: FormData) {
@@ -42,6 +44,7 @@ export async function createBooking(prevState: State, formData: FormData) {
     userId: formData.get('userId'),
     price: formData.get('price'),
     bookingSession: formData.get('bookingSession'),
+    menuPreference: formData.get('menuPreference'),
   });
   
   if (!validatedFields.success) {
@@ -52,7 +55,7 @@ export async function createBooking(prevState: State, formData: FormData) {
     };
   }
 
-  const { venueId, date, guests, message, userId, price, bookingSession } = validatedFields.data;
+  const { venueId, date, guests, message, userId, price, bookingSession, menuPreference } = validatedFields.data;
   
   // Normalize date to remove time part for querying
   const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -89,6 +92,7 @@ export async function createBooking(prevState: State, formData: FormData) {
       userId,
       status: 'Pending',
       bookingSession,
+      menuPreference,
       totalAmount: price, 
       createdAt: Timestamp.now(),
       // Mock data that would exist in a real venue collection
