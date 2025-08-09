@@ -8,7 +8,7 @@ import {
   SidebarMenuButton,
   SidebarInset,
 } from "@/components/ui/sidebar";
-import { Building2, LayoutDashboard, Settings, Bot } from "lucide-react";
+import { Building2, LayoutDashboard, Settings, CalendarCheck } from "lucide-react";
 import { Header } from "@/components/Header";
 
 export default function DashboardLayout({
@@ -37,6 +37,14 @@ export default function DashboardLayout({
                     <Link href="/dashboard/venues">
                       <Building2 />
                       My Venues
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                 <SidebarMenuItem>
+                  <SidebarMenuButton asChild variant="ghost">
+                    <Link href="/dashboard/bookings">
+                      <CalendarCheck />
+                      My Bookings
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
