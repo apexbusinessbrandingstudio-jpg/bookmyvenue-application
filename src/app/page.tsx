@@ -30,7 +30,15 @@ import { venues } from "@/lib/data";
 
 export default function Home() {
     const [priceRange, setPriceRange] = React.useState([1000, 4000])
+    const [filter, setFilter] = React.useState("All");
+
     const publishedVenues = venues.filter(v => v.status === 'Published');
+    
+    const filteredVenues = publishedVenues.filter(venue => {
+        if (filter === "All") return true;
+        return venue.type === filter;
+    })
+
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -57,6 +65,15 @@ export default function Home() {
         <section id="venues" className="py-12 md:py-20">
           <div className="container">
             <div className="mb-12 rounded-lg border bg-card p-6 shadow-sm">
+                <div className="mb-6 text-center">
+                    <h2 className="text-2xl font-headline font-semibold">Are you looking for a...</h2>
+                     <div className="mt-4 flex justify-center gap-4">
+                        <Button variant={filter === 'All' ? 'default' : 'outline'} onClick={() => setFilter('All')}>All Venues</Button>
+                        <Button variant={filter === 'Farmhouse' ? 'default' : 'outline'} onClick={() => setFilter('Farmhouse')}>Farmhouse</Button>
+                        <Button variant={filter === 'Function Hall' ? 'default' : 'outline'} onClick={() => setFilter('Function Hall')}>Function Hall</Button>
+                    </div>
+                </div>
+
               <div className="grid grid-cols-1 items-end gap-6 md:grid-cols-4">
                 <div className="md:col-span-2">
                   <label
@@ -81,14 +98,14 @@ export default function Home() {
                   >
                     Venue Type
                   </label>
-                  <Select>
+                  <Select onValueChange={(value) => setFilter(value === 'all' ? 'All' : value)} value={filter}>
                     <SelectTrigger id="type">
                       <SelectValue placeholder="All Types" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      <SelectItem value="farmhouse">Farmhouse</SelectItem>
-                      <SelectItem value="function-hall">
+                      <SelectItem value="All">All Types</SelectItem>
+                      <SelectItem value="Farmhouse">Farmhouse</SelectItem>
+                      <SelectItem value="Function Hall">
                         Function Hall
                       </SelectItem>
                     </SelectContent>
@@ -113,7 +130,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {publishedVenues.map((venue) => (
+              {filteredVenues.map((venue) => (
                 <Card
                   key={venue.id}
                   className="overflow-hidden shadow-md transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1"
