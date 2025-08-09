@@ -196,7 +196,7 @@ export default function VenueDetailPage() {
         <div className="container">
           <Carousel className="mb-8 w-full overflow-hidden rounded-lg shadow-lg">
             <CarouselContent>
-              {venue.images.map((image, index) => (
+              {(venue.images || []).map((image, index) => (
                 <CarouselItem key={index}>
                   <Image
                     src={image.src}
@@ -251,7 +251,7 @@ export default function VenueDetailPage() {
                 Amenities
               </h2>
               <div className="grid grid-cols-2 gap-4">
-                {venue.amenities.map((amenity) => {
+                {(venue.amenities || []).map((amenity) => {
                   const Icon = amenityIcons[amenity.name] || CheckCircle;
                   return (
                     <div key={amenity.name} className="flex items-center">

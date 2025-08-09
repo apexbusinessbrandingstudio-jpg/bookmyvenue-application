@@ -86,6 +86,10 @@ export const venues = [
     videoUrl: '',
     image: 'https://placehold.co/600x400.png',
     hint: 'manor exterior',
+    images: [{ src: "https://placehold.co/600x400.png", hint: 'manor exterior'}],
+    amenities: [],
+    owner: { name: 'N/A', email: '', phone: '' },
+    description: 'An elegant manor surrounded by ancient oak trees.'
   },
   {
     id: 4,
@@ -100,6 +104,10 @@ export const venues = [
     videoUrl: '',
     image: 'https://placehold.co/600x400.png',
     hint: 'loft interior',
+    images: [{ src: "https://placehold.co/600x400.png", hint: 'loft interior'}],
+    amenities: [],
+    owner: { name: 'N/A', email: '', phone: '' },
+    description: 'A modern and chic loft space for intimate events.'
   },
   {
     id: 5,
@@ -114,6 +122,10 @@ export const venues = [
     videoUrl: '',
     image: 'https://placehold.co/600x400.png',
     hint: 'lake house',
+    images: [{ src: "https://placehold.co/600x400.png", hint: 'lake house'}],
+    amenities: [],
+    owner: { name: 'N/A', email: '', phone: '' },
+    description: 'A cozy retreat with stunning views of the lake.'
   },
   {
     id: 6,
@@ -128,6 +140,10 @@ export const venues = [
     videoUrl: '',
     image: 'https://placehold.co/600x400.png',
     hint: 'pavilion night',
+    images: [{ src: "https://placehold.co/600x400.png", hint: 'pavilion night'}],
+    amenities: [],
+    owner: { name: 'N/A', email: '', phone: '' },
+    description: 'A grand pavilion perfect for large-scale events under the stars.'
   },
     {
     id: 7,
@@ -141,6 +157,11 @@ export const venues = [
     hint: 'modern hall',
     priceDay: 1000,
     priceNight: 1500,
+    capacity: 100,
+    images: [{ src: "https://placehold.co/600x400.png", hint: 'modern hall'}],
+    amenities: [],
+    owner: { name: 'N/A', email: '', phone: '' },
+    description: 'A newly renovated hall in the heart of the city.'
   },
   {
     id: 8,
@@ -154,6 +175,11 @@ export const venues = [
     hint: 'empty room',
     priceDay: 500,
     priceNight: 500,
+    capacity: 10,
+    images: [{ src: "https://placehold.co/600x400.png", hint: 'empty room'}],
+    amenities: [],
+    owner: { name: 'N/A', email: '', phone: '' },
+    description: 'This venue submission was not approved.'
   },
   {
     id: 9,
