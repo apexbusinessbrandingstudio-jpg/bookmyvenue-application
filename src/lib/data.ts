@@ -40,16 +40,16 @@ export const venues = [
     videoUrl: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4',
     images: [
       {
-        src: 'https://placehold.co/1200x800.png',
-        hint: 'rustic farmhouse exterior',
+        src: 'https://placehold.co/1200x700.png',
+        hint: 'rustic farmhouse',
       },
       {
-        src: 'https://placehold.co/1200x800.png',
-        hint: 'farmhouse living room',
+        src: 'https://placehold.co/1200x700.png',
+        hint: 'farmhouse interior',
       },
       {
-        src: 'https://placehold.co/1200x800.png',
-        hint: 'manicured farmhouse garden',
+        src: 'https://placehold.co/1200x700.png',
+        hint: 'farmhouse garden',
       },
     ],
     description:
@@ -75,9 +75,9 @@ export const venues = [
     bookingOptions: 'Day/Night Events',
     videoUrl: '',
     images: [
-        { src: "https://placehold.co/1200x800.png", hint: "elegant ballroom wedding"},
-        { src: "https://placehold.co/1200x800.png", hint: "grand ballroom interior"},
-        { src: "https://placehold.co/1200x800.png", hint: "crystal ballroom chandeliers"},
+        { src: "https://placehold.co/1200x700.png", hint: "function hall"},
+        { src: "https://placehold.co/1200x700.png", hint: "ballroom interior"},
+        { src: "https://placehold.co/1200x700.png", hint: "elegant chandeliers"},
     ],
     description: "A stunning ballroom with crystal chandeliers and a grand staircase, ideal for lavish weddings and formal events.",
     amenities: ['valet-parking', 'in-house-decor', 'bridal-suite', 'sound-system', 'lift', 'catering'],
@@ -103,9 +103,9 @@ export const venues = [
     image: 'https://placehold.co/600x400.png',
     hint: 'country manor exterior',
     images: [
-        { src: "https://placehold.co/1200x800.png", hint: 'country manor exterior'},
-        { src: "https://placehold.co/1200x800.png", hint: 'estate garden party'},
-        { src: "https://placehold.co/1200x800.png", hint: 'manor library interior'},
+        { src: "https://placehold.co/1200x700.png", hint: 'country manor'},
+        { src: "https://placehold.co/1200x700.png", hint: 'garden party'},
+        { src: "https://placehold.co/1200x700.png", hint: 'library interior'},
     ],
     amenities: ['wifi', 'parking', 'ac', 'tv', 'bedroom', 'barbeque'],
     owner: { name: 'N/A', email: '', phone: '' },
@@ -125,9 +125,9 @@ export const venues = [
     image: 'https://placehold.co/600x400.png',
     hint: 'urban loft interior',
     images: [
-        { src: "https://placehold.co/1200x800.png", hint: 'urban loft interior'},
-        { src: "https://placehold.co/1200x800.png", hint: 'city view rooftop'},
-        { src: "https://placehold.co/1200x800.png", hint: 'modern loft bar'},
+        { src: "https://placehold.co/1200x700.png", hint: 'urban loft'},
+        { src: "https://placehold.co/1200x700.png", hint: 'rooftop view'},
+        { src: "https://placehold.co/1200x700.png", hint: 'modern bar'},
     ],
     amenities: ['wifi', 'ac', 'sound-system', 'catering'],
     owner: { name: 'N/A', email: '', phone: '' },
@@ -147,9 +147,9 @@ export const venues = [
     image: 'https://placehold.co/600x400.png',
     hint: 'cabin lake',
     images: [
-        { src: "https://placehold.co/1200x800.png", hint: 'cabin lake'},
-        { src: "https://placehold.co/1200x800.png", hint: 'mountain lake view'},
-        { src: "https://placehold.co/1200x800.png", hint: 'cozy house interior'},
+        { src: "https://placehold.co/1200x700.png", hint: 'lake cabin'},
+        { src: "https://placehold.co/1200x700.png", hint: 'mountain view'},
+        { src: "https://placehold.co/1200x700.png", hint: 'cozy interior'},
     ],
     amenities: ['wifi', 'parking', 'refrigerator', 'bedroom', 'children-park'],
     owner: { name: 'N/A', email: '', phone: '' },
@@ -169,9 +169,9 @@ export const venues = [
     image: 'https://placehold.co/600x400.png',
     hint: 'glass pavilion night',
     images: [
-        { src: "https://placehold.co/1200x800.png", hint: 'glass pavilion night'},
-        { src: "https://placehold.co/1200x800.png", hint: 'wedding reception setup'},
-        { src: "https://placehold.co/1200x800.png", hint: 'pavilion string lights'},
+        { src: "https://placehold.co/1200x700.png", hint: 'glass pavilion'},
+        { src: "https://placehold.co/1200x700.png", hint: 'wedding reception'},
+        { src: "https://placehold.co/1200x700.png", hint: 'string lights'},
     ],
     amenities: ['parking', 'sound-system', 'in-house-decor'],
     owner: { name: 'N/A', email: '', phone: '' },
@@ -191,9 +191,9 @@ export const venues = [
     priceNight: 1500,
     capacity: 100,
     images: [
-        { src: "https://placehold.co/1200x800.png", hint: 'modern event hall'},
-        { src: "https://placehold.co/1200x800.png", hint: 'event hall stage'},
-        { src: "https://placehold.co/1200x800.png", hint: 'banquet seating arrangement'},
+        { src: "https://placehold.co/1200x700.png", hint: 'modern hall'},
+        { src: "https://placehold.co/1200x700.png", hint: 'event stage'},
+        { src: "https://placehold.co/1200x700.png", hint: 'banquet seating'},
     ],
     amenities: [],
     owner: { name: 'N/A', email: '', phone: '' },
@@ -213,8 +213,8 @@ export const venues = [
     priceNight: 500,
     capacity: 10,
     images: [
-        { src: "https://placehold.co/1200x800.png", hint: 'empty room'},
-        { src: "https://placehold.co/1200x800.png", hint: 'blank space'},
+        { src: "https://placehold.co/1200x700.png", hint: 'empty room'},
+        { src: "https://placehold.co/1200x700.png", hint: 'blank space'},
     ],
     amenities: [],
     owner: { name: 'N/A', email: '', phone: '' },
@@ -232,9 +232,9 @@ export const venues = [
     bookingOptions: 'Day/Night Events',
     videoUrl: '',
     images: [
-        { src: "https://placehold.co/1200x800.png", hint: "royal banquet hall"},
-        { src: "https://placehold.co/1200x800.png", hint: "ornate banquet interior"},
-        { src: "https://placehold.co/1200x800.png", hint: "lavish banquet dining"},
+        { src: "https://placehold.co/1200x700.png", hint: "royal banquet"},
+        { src: "https://placehold.co/1200x700.png", hint: "ornate interior"},
+        { src: "https://placehold.co/1200x700.png", hint: "lavish dining"},
     ],
     description: "An exquisite banquet hall designed for royal gatherings and grand celebrations. Features opulent decor and world-class service.",
     amenities: ['valet-parking', 'in-house-decor', 'sound-system', 'wifi', 'catering'],
@@ -304,3 +304,6 @@ export const monthlyBookingsData = [
   { month: "May", bookings: 6 },
   { month: "Jun", bookings: 8 },
 ];
+
+
+    
