@@ -1,3 +1,5 @@
+"use client"
+
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import {
@@ -20,6 +22,8 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { MapPin, Users, DollarSign, Search } from "lucide-react";
+import { Slider } from "@/components/ui/slider"
+import React from "react";
 
 // Mock data for venues
 const venues = [
@@ -86,6 +90,8 @@ const venues = [
 ];
 
 export default function Home() {
+    const [priceRange, setPriceRange] = React.useState([1000, 4000])
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -111,7 +117,7 @@ export default function Home() {
         <section id="venues" className="py-12 md:py-20">
           <div className="container">
             <div className="mb-12 rounded-lg border bg-card p-6 shadow-sm">
-              <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-4">
+              <div className="grid grid-cols-1 items-end gap-6 md:grid-cols-4">
                 <div className="md:col-span-2">
                   <label
                     htmlFor="search"
@@ -148,7 +154,19 @@ export default function Home() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button size="lg" className="w-full">
+                <div className="md:col-span-2">
+                  <label className="mb-2 block text-sm font-medium">
+                    Price Range: ${priceRange[0]} - ${priceRange[1]}
+                  </label>
+                  <Slider
+                    defaultValue={priceRange}
+                    min={500}
+                    max={5000}
+                    step={100}
+                    onValueChange={setPriceRange}
+                  />
+                </div>
+                <Button size="lg" className="w-full md:col-start-4">
                   Search Venues
                 </Button>
               </div>
