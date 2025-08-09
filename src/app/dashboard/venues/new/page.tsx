@@ -88,6 +88,14 @@ export default function NewVenuePage() {
                 <Input id="price" type="number" placeholder="$" />
               </div>
             </div>
+             <div className="space-y-2">
+              <Label htmlFor="rules">Venue Rules</Label>
+              <Textarea
+                id="rules"
+                placeholder="e.g., No smoking, no pets, etc."
+                rows={3}
+              />
+            </div>
           </div>
           
           <Separator />
