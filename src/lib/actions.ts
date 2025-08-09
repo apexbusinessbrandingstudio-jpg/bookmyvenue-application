@@ -29,7 +29,7 @@ const BookingSchema = z.object({
   guests: z.coerce.number().gt(0, { message: 'Number of guests must be positive.' }),
   message: z.string().optional(),
   userId: z.string(), // Assuming the user is logged in
-  price: z.coerce.number(),
+  price: z.coerce.number(), // This is now the final price (offer or regular)
   bookingSession: z.string({ required_error: 'Please select a booking session.' }),
 });
 
@@ -88,7 +88,7 @@ export async function createBooking(prevState: State, formData: FormData) {
       userId,
       status: 'Pending',
       bookingSession,
-      totalAmount: price, // For now, totalAmount is just the daily price
+      totalAmount: price, // This now correctly reflects the price paid (offer or regular)
       createdAt: Timestamp.now(),
       // Mock data that would exist in a real venue collection
       venueName: "The Grand Meadow",

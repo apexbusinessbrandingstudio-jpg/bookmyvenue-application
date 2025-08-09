@@ -48,6 +48,7 @@ const formSchema = z.object({
   description: z.string().min(1, "Description is required."),
   capacity: z.coerce.number().min(1, "Capacity must be at least 1."),
   price: z.coerce.number().min(1, "Price is required."),
+  offerPrice: z.coerce.number().optional(),
   rules: z.string().optional(),
   bookingOptions: z.string().min(1, "Booking options are required."),
   images: z
@@ -82,6 +83,7 @@ export default function EditVenuePage() {
       description: "",
       capacity: 0,
       price: 0,
+      offerPrice: undefined,
       rules: "",
       bookingOptions: "",
       images: [],
@@ -105,7 +107,10 @@ export default function EditVenuePage() {
 
         if (docSnap.exists()) {
           const venueData = docSnap.data() as VenueFormValues;
-          form.reset(venueData);
+          form.reset({
+            ...venueData,
+            offerPrice: venueData.offerPrice || undefined,
+          });
         } else {
           toast({
             title: "Error",
@@ -151,6 +156,7 @@ export default function EditVenuePage() {
       const venueRef = doc(db, "venues", venueId);
       await updateDoc(venueRef, {
         ...venueData,
+        offerPrice: venueData.offerPrice || null,
         images: imageUrls,
         videoUrl: videoUrl,
       });
@@ -278,7 +284,7 @@ export default function EditVenuePage() {
                 )}
               />
               <div className="grid gap-6 md:grid-cols-2">
-                <FormField
+                 <FormField
                   control={form.control}
                   name="capacity"
                   render={({ field }) => (
@@ -295,12 +301,26 @@ export default function EditVenuePage() {
                     </FormItem>
                   )}
                 />
+                <div />
                 <FormField
                   control={form.control}
                   name="price"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Base Price (per day/session)</FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="$" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="offerPrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Offer Price (Optional)</FormLabel>
                       <FormControl>
                         <Input type="number" placeholder="$" {...field} />
                       </FormControl>

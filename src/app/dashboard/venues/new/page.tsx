@@ -46,6 +46,7 @@ const formSchema = z.object({
   description: z.string().min(1, "Description is required."),
   capacity: z.coerce.number().min(1, "Capacity must be at least 1."),
   price: z.coerce.number().min(1, "Price is required."),
+  offerPrice: z.coerce.number().optional(),
   rules: z.string().optional(),
   bookingOptions: z.string().min(1, "Booking options are required."),
   images: z.any().refine((files) => files?.length > 0, "At least one image is required."),
@@ -69,6 +70,7 @@ export default function NewVenuePage() {
       description: "",
       capacity: 0,
       price: 0,
+      offerPrice: undefined,
       rules: "",
       bookingOptions: "",
       images: undefined,
@@ -97,6 +99,7 @@ export default function NewVenuePage() {
         description: values.description,
         capacity: values.capacity,
         price: values.price,
+        offerPrice: values.offerPrice || null,
         rules: values.rules || "",
         bookingOptions: values.bookingOptions,
         images: [],
@@ -252,12 +255,26 @@ export default function NewVenuePage() {
                       </FormItem>
                     )}
                   />
+                  <div />
                 <FormField
                     control={form.control}
                     name="price"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Base Price (per day/session)</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="$" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="offerPrice"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Offer Price (Optional)</FormLabel>
                         <FormControl>
                           <Input type="number" placeholder="$" {...field} />
                         </FormControl>

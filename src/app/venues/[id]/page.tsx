@@ -57,6 +57,7 @@ const defaultVenue = {
   location: "N/A",
   capacity: 0,
   price: 0,
+  offerPrice: null,
   images: [{ src: "https://placehold.co/1200x800.png", hint: "placeholder" }],
   description: "The venue you are looking for could not be found.",
   amenities: [],
@@ -113,9 +114,10 @@ export default function VenueDetailPage() {
 
 
   const handlePayment = () => {
+    const amountToPay = venue.offerPrice ? venue.offerPrice : venue.price;
     const options = {
       key: "rzp_test_your_key_id", // Replace with your Test Key ID
-      amount: venue.price * 100, // Amount in paise
+      amount: amountToPay * 100, // Amount in paise
       currency: "INR",
       name: "BOOKMYVENUE",
       description: `Booking for ${venue.name}`,
@@ -161,6 +163,7 @@ export default function VenueDetailPage() {
   }, [state, toast, date]);
   
   const disabledDates = [{ before: new Date() }, ...bookedDates];
+  const bookingPrice = venue.offerPrice || venue.price;
 
   const amenityIcons = {
     'Free Wi-Fi': Wifi,
@@ -284,9 +287,15 @@ export default function VenueDetailPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="flex items-baseline justify-center">
-                    <span className="text-4xl font-bold">${venue.price}</span>
-                    <span className="text-muted-foreground">/session</span>
+                   <div className="flex items-baseline justify-center text-center">
+                    {venue.offerPrice ? (
+                      <div>
+                        <p className="text-muted-foreground line-through text-2xl">${venue.price}</p>
+                        <p className="text-4xl font-bold text-accent">${venue.offerPrice}<span className="text-lg font-normal text-muted-foreground">/session</span></p>
+                      </div>
+                    ) : (
+                      <p className="text-4xl font-bold">${venue.price}<span className="text-lg font-normal text-muted-foreground">/session</span></p>
+                    )}
                   </div>
 
                   {!user ? (
@@ -297,7 +306,7 @@ export default function VenueDetailPage() {
                     <form ref={formRef} action={dispatch} className="space-y-4">
                       <input type="hidden" name="venueId" value={venue.id} />
                       <input type="hidden" name="userId" value={user.uid} />
-                      <input type="hidden" name="price" value={venue.price} />
+                      <input type="hidden" name="price" value={bookingPrice} />
                       <div>
                         <Label className="mb-2 block">Select a Date</Label>
                         <Calendar

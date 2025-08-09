@@ -168,9 +168,16 @@ export default function Home() {
                           <Users className="mr-2 h-4 w-4 text-primary" />
                           <span>{venue.capacity} Guests</span>
                         </div>
-                        <div className="flex items-center">
-                          <DollarSign className="mr-2 h-4 w-4 text-primary" />
-                          <span>From ${venue.price}</span>
+                         <div className="flex items-center font-semibold">
+                          <DollarSign className="mr-1 h-4 w-4 text-primary" />
+                          {venue.offerPrice ? (
+                            <div className="flex items-baseline gap-2">
+                                <span className="text-accent text-lg">${venue.offerPrice}</span>
+                                <span className="line-through text-muted-foreground text-sm">${venue.price}</span>
+                            </div>
+                          ) : (
+                            <span>From ${venue.price}</span>
+                          )}
                         </div>
                       </div>
                     </CardFooter>
