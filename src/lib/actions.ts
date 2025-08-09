@@ -1,11 +1,9 @@
 'use server';
 
 import { z } from 'zod';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, getDocs, query, where, Timestamp } from 'firebase/firestore';
 
-// Mock database check
-const existingBookings = [
-  { venueId: 1, date: new Date('2024-08-15') },
-];
 
 export type State = {
   errors?: {
@@ -13,6 +11,7 @@ export type State = {
     date?: string[];
     guests?: string[];
     message?: string[];
+    userId?: string[];
   };
   message?: string | null;
   success?: boolean;
@@ -26,6 +25,7 @@ const BookingSchema = z.object({
   }),
   guests: z.coerce.number().gt(0, { message: 'Number of guests must be positive.' }),
   message: z.string().optional(),
+  userId: z.string(), // Assuming the user is logged in
 });
 
 export async function createBooking(prevState: State, formData: FormData) {
@@ -34,6 +34,7 @@ export async function createBooking(prevState: State, formData: FormData) {
     date: formData.get('date'),
     guests: formData.get('guests'),
     message: formData.get('message'),
+    userId: formData.get('userId'),
   });
   
   if (!validatedFields.success) {
@@ -44,33 +45,56 @@ export async function createBooking(prevState: State, formData: FormData) {
     };
   }
 
-  const { venueId, date } = validatedFields.data;
+  const { venueId, date, guests, message, userId } = validatedFields.data;
+  
+  // Normalize date to remove time part for querying
+  const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const endOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
 
-  // Check for booking conflicts
-  const isBooked = existingBookings.some(
-    (booking) =>
-      booking.venueId === venueId &&
-      booking.date.toDateString() === date.toDateString()
-  );
+  try {
+     // Check for booking conflicts
+    const bookingsRef = collection(db, "bookings");
+    const q = query(bookingsRef, 
+      where("venueId", "==", venueId),
+      where("date", ">=", Timestamp.fromDate(startOfDay)),
+      where("date", "<", Timestamp.fromDate(endOfDay))
+    );
+    
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      return {
+        errors: {
+          date: ['This date is already booked. Please choose another.'],
+        },
+        message: 'Booking failed. The selected date is unavailable.',
+        success: false,
+      };
+    }
 
-  if (isBooked) {
+    // Add new booking to Firestore
+    await addDoc(collection(db, "bookings"), {
+      venueId,
+      date: Timestamp.fromDate(date),
+      guests,
+      message,
+      userId,
+      status: 'Pending',
+      createdAt: Timestamp.now(),
+      // Mock data that would exist in a real venue collection
+      venueName: "The Grand Meadow",
+      customerName: "New Customer", // You'd fetch customer name from user profile
+    });
+
     return {
-      errors: {
-        date: ['This date is already booked. Please choose another.'],
-      },
-      message: 'Booking failed. The selected date is unavailable.',
+      errors: {},
+      message: `Booking request for ${date.toLocaleDateString()} has been sent!`,
+      success: true,
+    }
+  } catch (error) {
+    console.error("Firestore error:", error);
+    return {
+      message: 'Database error. Failed to create booking.',
       success: false,
-    };
-  }
-  
-  // In a real app, you would save the booking to a database here.
-  console.log('Booking created:', validatedFields.data);
-  
-  existingBookings.push({ venueId, date });
-
-  return {
-    errors: {},
-    message: `Booking request for ${date.toLocaleDateString()} has been sent!`,
-    success: true,
+    }
   }
 }

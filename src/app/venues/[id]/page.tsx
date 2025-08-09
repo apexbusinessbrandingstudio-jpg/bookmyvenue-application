@@ -39,6 +39,9 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { createBooking, type State } from '@/lib/actions';
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
+import { db } from "@/lib/firebase";
+import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
 
 
 const venue = {
@@ -75,7 +78,6 @@ const venue = {
     email: "jane.doe@grandmeadow.com",
     phone: "+1 (555) 123-4567",
   },
-  bookedDates: [new Date('2024-08-15')],
 };
 
 function SubmitButton() {
@@ -95,11 +97,28 @@ function SubmitButton() {
 
 export default function VenueDetailPage() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [bookedDates, setBookedDates] = React.useState<Date[]>([]);
+  const { user } = useAuth();
   
   const initialState: State = { message: null, errors: {}, success: false };
   const [state, dispatch] = useFormState(createBooking, initialState);
   const { toast } = useToast();
   const formRef = React.useRef<HTMLFormElement>(null);
+  
+  const createBookingWithAuth = dispatch.bind(null, user ? { ...initialState, userId: user.uid } : initialState);
+
+  React.useEffect(() => {
+    async function fetchBookedDates() {
+      if (!venue.id) return;
+      
+      const q = query(collection(db, "bookings"), where("venueId", "==", venue.id), where("status", "in", ["Approved", "Pending"]));
+      const querySnapshot = await getDocs(q);
+      const dates = querySnapshot.docs.map(doc => (doc.data().date as Timestamp).toDate());
+      setBookedDates(dates);
+    }
+    fetchBookedDates();
+  }, [venue.id]);
+
 
   const handlePayment = () => {
     const options = {
@@ -116,8 +135,8 @@ export default function VenueDetailPage() {
         });
       },
       prefill: {
-        name: "Test User",
-        email: "test.user@example.com",
+        name: user?.displayName || "Test User",
+        email: user?.email || "test.user@example.com",
         contact: "9999999999",
       },
       notes: {
@@ -143,10 +162,13 @@ export default function VenueDetailPage() {
     if (state.success) {
       formRef.current?.reset();
       setDate(new Date());
+      // Re-fetch booked dates to include the new one
+      const newBookedDate = new Date(date!);
+      setBookedDates(prev => [...prev, newBookedDate]);
     }
-  }, [state, toast]);
+  }, [state, toast, date]);
   
-  const disabledDates = [{ before: new Date() }, ...venue.bookedDates];
+  const disabledDates = [{ before: new Date() }, ...bookedDates];
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -234,7 +256,7 @@ export default function VenueDetailPage() {
                     Booking
                   </CardTitle>
                   <CardDescription>
-                    Check availability and send a request
+                    {user ? "Check availability and send a request" : "Please log in to make a booking"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -243,9 +265,14 @@ export default function VenueDetailPage() {
                     <span className="text-muted-foreground">/day</span>
                   </div>
 
-                  {!state.success ? (
+                  {!user ? (
+                     <Button asChild size="lg" className="w-full">
+                        <a href="/login">Login to Book</a>
+                      </Button>
+                  ) : !state.success ? (
                     <form ref={formRef} action={dispatch} className="space-y-4">
                       <input type="hidden" name="venueId" value={venue.id} />
+                      <input type="hidden" name="userId" value={user.uid} />
                       <div>
                         <Label className="mb-2 block">Select a Date</Label>
                         <Calendar
