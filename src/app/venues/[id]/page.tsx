@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import * as React from "react";
@@ -75,9 +76,13 @@ const defaultVenue = {
   location: "N/A",
   capacity: 0,
   priceDay: null,
+  offerPriceDay: null,
   priceNight: null,
+  offerPriceNight: null,
   price12hr: null,
+  offerPrice12hr: null,
   price24hr: null,
+  offerPrice24hr: null,
   images: [{ src: "https://placehold.co/1200x800.png", hint: "placeholder" }],
   description: "The venue you are looking for could not be found.",
   amenities: [],
@@ -163,7 +168,7 @@ export default function VenueDetailPage() {
 
   const handlePayment = (price: number) => {
     const options = {
-      key: "rzp_test_your_key_id", // Replace with your Test Key ID
+      key: "rzp_test_1DPv_new", // Replace with your Test Key ID
       amount: price * 100, // Amount in paise
       currency: "INR",
       name: "BOOKMYVENUE",
@@ -211,11 +216,23 @@ export default function VenueDetailPage() {
   
   const disabledDates = [{ before: new Date() }, ...bookedDates];
   
-  let bookingPrice = 0;
-  if(selectedSession === 'day' && venue.priceDay) bookingPrice = venue.priceDay;
-  if(selectedSession === 'night' && venue.priceNight) bookingPrice = venue.priceNight;
-  if(selectedSession === '12hr' && venue.price12hr) bookingPrice = venue.price12hr;
-  if(selectedSession === '24hr' && venue.price24hr) bookingPrice = venue.price24hr;
+    const getPrice = (session: string | undefined) => {
+        if (!session) return { price: 0, offer: false };
+        const priceKey = `price${session.charAt(0).toUpperCase() + session.slice(1)}`;
+        const offerPriceKey = `offerPrice${session.charAt(0).toUpperCase() + session.slice(1)}`;
+        
+        // @ts-ignore
+        const offerPrice = venue[offerPriceKey];
+        // @ts-ignore
+        const regularPrice = venue[priceKey];
+
+        if (offerPrice && offerPrice > 0) {
+            return { price: offerPrice, originalPrice: regularPrice, offer: true };
+        }
+        return { price: regularPrice || 0, offer: false };
+    };
+
+    const { price: bookingPrice, originalPrice, offer } = getPrice(selectedSession);
 
 
   const amenityIcons: { [key: string]: React.ElementType } = {
@@ -368,7 +385,20 @@ export default function VenueDetailPage() {
                 <CardContent className="space-y-6">
                    <div className="text-center">
                      {bookingPrice > 0 ? (
-                        <p className="text-4xl font-bold text-accent">₹{bookingPrice}<span className="text-lg font-normal text-muted-foreground">/session</span></p>
+                        <div className="flex flex-col items-center">
+                             {offer && originalPrice && (
+                                <span className="text-lg text-muted-foreground line-through">
+                                    ₹{originalPrice}
+                                </span>
+                            )}
+                            <p className="text-4xl font-bold text-accent">
+                                ₹{bookingPrice}
+                                <span className="text-lg font-normal text-muted-foreground">/session</span>
+                            </p>
+                             {offer && (
+                                <Badge variant="destructive" className="mt-2">Offer Price!</Badge>
+                            )}
+                        </div>
                      ) : (
                         <p className="text-lg text-muted-foreground">Select a session to see the price</p>
                      )}
@@ -411,16 +441,26 @@ export default function VenueDetailPage() {
                              {venue.type === 'Function Hall' || venue.type === 'Banquet Hall' ? (
                                 <>
                                     <Label className="flex flex-col items-center gap-2 border rounded-md p-3 cursor-pointer has-[input:checked]:bg-accent has-[input:checked]:text-accent-foreground">
-                                        <RadioGroupItem value="day" id="day" className="sr-only"/>
+                                        <RadioGroupItem value="Day" id="day" className="sr-only"/>
                                         <Sun/>
                                         <span>Day Event</span>
-                                        {venue.priceDay && <span className="font-bold">₹{venue.priceDay}</span>}
+                                        {venue.priceDay && (
+                                            <div className="font-bold flex items-center gap-2">
+                                                {venue.offerPriceDay && <span className="text-sm line-through text-muted-foreground/80">₹{venue.priceDay}</span>}
+                                                <span>₹{venue.offerPriceDay || venue.priceDay}</span>
+                                            </div>
+                                        )}
                                     </Label>
                                     <Label className="flex flex-col items-center gap-2 border rounded-md p-3 cursor-pointer has-[input:checked]:bg-accent has-[input:checked]:text-accent-foreground">
-                                        <RadioGroupItem value="night" id="night" className="sr-only"/>
+                                        <RadioGroupItem value="Night" id="night" className="sr-only"/>
                                         <Moon/>
                                         <span>Night Event</span>
-                                        {venue.priceNight && <span className="font-bold">₹{venue.priceNight}</span>}
+                                         {venue.priceNight && (
+                                            <div className="font-bold flex items-center gap-2">
+                                                {venue.offerPriceNight && <span className="text-sm line-through text-muted-foreground/80">₹{venue.priceNight}</span>}
+                                                <span>₹{venue.offerPriceNight || venue.priceNight}</span>
+                                            </div>
+                                        )}
                                     </Label>
                                 </>
                              ) : venue.type === 'Farmhouse' ? (
@@ -429,13 +469,23 @@ export default function VenueDetailPage() {
                                         <RadioGroupItem value="12hr" id="12hr" className="sr-only"/>
                                         <Hourglass className="h-5 w-5"/>
                                         <span>12 Hours</span>
-                                         {venue.price12hr && <span className="font-bold">₹{venue.price12hr}</span>}
+                                         {venue.price12hr && (
+                                            <div className="font-bold flex items-center gap-2">
+                                                {venue.offerPrice12hr && <span className="text-sm line-through text-muted-foreground/80">₹{venue.price12hr}</span>}
+                                                <span>₹{venue.offerPrice12hr || venue.price12hr}</span>
+                                            </div>
+                                        )}
                                     </Label>
                                     <Label className="flex flex-col items-center gap-2 border rounded-md p-3 cursor-pointer has-[input:checked]:bg-accent has-[input:checked]:text-accent-foreground">
                                         <RadioGroupItem value="24hr" id="24hr" className="sr-only"/>
                                         <Hourglass />
                                         <span>24 Hours</span>
-                                        {venue.price24hr && <span className="font-bold">₹{venue.price24hr}</span>}
+                                        {venue.price24hr && (
+                                            <div className="font-bold flex items-center gap-2">
+                                                {venue.offerPrice24hr && <span className="text-sm line-through text-muted-foreground/80">₹{venue.price24hr}</span>}
+                                                <span>₹{venue.offerPrice24hr || venue.price24hr}</span>
+                                            </div>
+                                        )}
                                     </Label>
                                 </>
                              ) : null }
@@ -505,7 +555,7 @@ export default function VenueDetailPage() {
                        <p className="text-muted-foreground">Your booking request has been successfully sent to the venue owner. You will be notified once it's confirmed.</p>
                        <Button onClick={() => handlePayment(bookingPrice)} size="lg" className="w-full">
                          <CreditCard className="mr-2 h-4 w-4" />
-                         Proceed to Payment
+                         Proceed to Payment (₹{bookingPrice})
                        </Button>
                     </div>
                   )}
@@ -519,3 +569,6 @@ export default function VenueDetailPage() {
     </div>
   );
 }
+
+
+    
