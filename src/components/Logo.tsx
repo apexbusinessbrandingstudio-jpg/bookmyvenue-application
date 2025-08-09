@@ -11,9 +11,11 @@ export function Logo() {
         strokeLinejoin="round"
         className="h-8 w-8 text-primary"
       >
-        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-        <path d="M2 17l10 5 10-5"></path>
-        <path d="M2 12l10 5 10-5"></path>
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
+        <path d="M12 2v4"></path>
+        <path d="M8 2v4"></path>
+        <path d="M16 2v4"></path>
       </svg>
        <span className="inline-block font-headline text-lg font-bold">
         Book My Venue
