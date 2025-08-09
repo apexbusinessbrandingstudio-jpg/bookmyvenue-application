@@ -40,7 +40,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp, doc, updateDoc } from "firebase/firestore";
 import { uploadFile } from "@/lib/storage";
-import { availableAmenities, menuOptions } from "@/lib/data";
+import { availableAmenities } from "@/lib/data";
 
 const formSchema = z.object({
   name: z.string().min(1, "Venue name is required."),
@@ -56,7 +56,6 @@ const formSchema = z.object({
   images: z.any().refine((files) => files?.length > 0, "At least one image is required."),
   video: z.any().optional(),
   amenities: z.array(z.string()).optional(),
-  menuOptions: z.array(z.string()).optional(),
 }).refine(data => {
     if (data.type === 'Farmhouse') {
         return !!data.price12hr && !!data.price24hr;
@@ -91,7 +90,6 @@ export default function NewVenuePage() {
       images: undefined,
       video: undefined,
       amenities: [],
-      menuOptions: [],
     },
   });
 
@@ -132,7 +130,6 @@ export default function NewVenuePage() {
         bookingOptions: bookingOptions,
         images: [],
         amenities: values.amenities || [],
-        menuOptions: values.menuOptions || [],
         videoUrl: "",
       };
 
@@ -421,63 +418,6 @@ export default function NewVenuePage() {
                 )}
               />
             </div>
-
-            <Separator />
-
-             <div className="space-y-4">
-              <h3 className="text-lg font-medium font-headline">Menu Options</h3>
-                <FormField
-                  control={form.control}
-                  name="menuOptions"
-                  render={() => (
-                    <FormItem>
-                      <div className="mb-4">
-                        <FormLabel className="text-base">Available Menu Options</FormLabel>
-                        <FormDescription>
-                          Select the types of food your venue can cater.
-                        </FormDescription>
-                      </div>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {menuOptions.map((option) => (
-                        <FormField
-                          key={option.id}
-                          control={form.control}
-                          name="menuOptions"
-                          render={({ field }) => {
-                            return (
-                              <FormItem
-                                key={option.id}
-                                className="flex flex-row items-start space-x-3 space-y-0"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(option.id)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([...(field.value || []), option.id])
-                                        : field.onChange(
-                                            field.value?.filter(
-                                              (value) => value !== option.id
-                                            )
-                                          )
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="font-normal">
-                                  {option.name}
-                                </FormLabel>
-                              </FormItem>
-                            )
-                          }}
-                        />
-                      ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-            </div>
-
 
             <Separator />
 

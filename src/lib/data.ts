@@ -23,7 +23,6 @@ export const availableAmenities = [
 export const menuOptions = [
     { id: 'veg', name: 'Veg' },
     { id: 'non-veg', name: 'Non-Veg' },
-    { id: 'beef', name: 'Beef' },
 ];
 
 
@@ -56,7 +55,6 @@ export const venues = [
     description:
       'A beautiful farmhouse set in acres of lush green meadows, perfect for weddings and corporate retreats. The Grand Meadow offers a serene escape from the city with modern amenities and breathtaking views.',
     amenities: ['wifi', 'parking', 'catering', 'ac', 'lift', 'dressing-room', 'swimming-pool', 'playground', 'bedroom'],
-    menuOptions: ['veg', 'non-veg'],
     owner: {
       name: 'Jane Doe',
       email: 'jane.doe@grandmeadow.com',
@@ -82,8 +80,7 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: "crystal ballroom chandeliers"},
     ],
     description: "A stunning ballroom with crystal chandeliers and a grand staircase, ideal for lavish weddings and formal events.",
-    amenities: ['valet-parking', 'in-house-decor', 'bridal-suite', 'sound-system', 'lift'],
-    menuOptions: ['veg', 'non-veg', 'beef'],
+    amenities: ['valet-parking', 'in-house-decor', 'bridal-suite', 'sound-system', 'lift', 'catering'],
     owner: {
         name: "John Smith",
         email: "john.smith@crystalballroom.com",
@@ -111,7 +108,6 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: 'manor library interior'},
     ],
     amenities: ['wifi', 'parking', 'ac', 'tv', 'bedroom', 'barbeque'],
-    menuOptions: ['veg'],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'An elegant manor surrounded by ancient oak trees.'
   },
@@ -133,8 +129,7 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: 'city view rooftop'},
         { src: "https://placehold.co/1200x800.png", hint: 'modern loft bar'},
     ],
-    amenities: ['wifi', 'ac', 'sound-system'],
-    menuOptions: ['non-veg', 'beef'],
+    amenities: ['wifi', 'ac', 'sound-system', 'catering'],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'A modern and chic loft space for intimate events.'
   },
@@ -157,7 +152,6 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: 'cozy house interior'},
     ],
     amenities: ['wifi', 'parking', 'refrigerator', 'bedroom', 'children-park'],
-    menuOptions: ['veg', 'non-veg'],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'A cozy retreat with stunning views of the lake.'
   },
@@ -180,7 +174,6 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: 'pavilion string lights'},
     ],
     amenities: ['parking', 'sound-system', 'in-house-decor'],
-    menuOptions: ['veg', 'non-veg'],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'A grand pavilion perfect for large-scale events under the stars.'
   },
@@ -203,7 +196,6 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: 'banquet seating arrangement'},
     ],
     amenities: [],
-    menuOptions: [],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'A newly renovated hall in the heart of the city.'
   },
@@ -225,7 +217,6 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: 'blank space'},
     ],
     amenities: [],
-    menuOptions: [],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'This venue submission was not approved.'
   },
@@ -246,8 +237,7 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: "lavish banquet dining"},
     ],
     description: "An exquisite banquet hall designed for royal gatherings and grand celebrations. Features opulent decor and world-class service.",
-    amenities: ['valet-parking', 'in-house-decor', 'sound-system', 'wifi'],
-    menuOptions: ['veg', 'non-veg', 'beef'],
+    amenities: ['valet-parking', 'in-house-decor', 'sound-system', 'wifi', 'catering'],
     owner: {
         name: "Cersei Lannister",
         email: "cersei@casterlyrock.com",
