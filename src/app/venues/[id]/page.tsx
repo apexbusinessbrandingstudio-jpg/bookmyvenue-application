@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import * as React from "react";
@@ -55,7 +54,7 @@ import {
   Waves,
   ToyBrick,
   BedDouble,
-  Football,
+  Goal,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { createBooking, type State } from '@/lib/actions';
@@ -235,7 +234,7 @@ export default function VenueDetailPage() {
     'dressing-room': PersonStanding,
     'swimming-pool': Waves,
     'children-park': ChildrensParkIcon,
-    'playground': Football,
+    'playground': Goal,
     'barbeque': BarbequeIcon,
     'bedroom': BedDouble,
   };
@@ -540,3 +539,7 @@ export default function VenueDetailPage() {
     </div>
   );
 }
+
+    
+
+    
