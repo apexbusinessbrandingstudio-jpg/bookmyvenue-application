@@ -34,6 +34,7 @@ import {
   CheckCircle,
   Mail,
   Phone,
+  CreditCard,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { createBooking, type State } from '@/lib/actions';
@@ -99,6 +100,37 @@ export default function VenueDetailPage() {
   const [state, dispatch] = useFormState(createBooking, initialState);
   const { toast } = useToast();
   const formRef = React.useRef<HTMLFormElement>(null);
+
+  const handlePayment = () => {
+    const options = {
+      key: "rzp_test_your_key_id", // Replace with your Test Key ID
+      amount: venue.price * 100, // Amount in paise
+      currency: "INR",
+      name: "BOOKMYVENUE",
+      description: `Booking for ${venue.name}`,
+      image: "https://example.com/your_logo.svg", // A URL to your logo
+      handler: function (response: any) {
+        toast({
+          title: "Payment Successful!",
+          description: `Payment ID: ${response.razorpay_payment_id}`,
+        });
+      },
+      prefill: {
+        name: "Test User",
+        email: "test.user@example.com",
+        contact: "9999999999",
+      },
+      notes: {
+        address: "Test Address",
+      },
+      theme: {
+        color: "#8FBC8F",
+      },
+    };
+    // @ts-ignore
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
 
   React.useEffect(() => {
     if (state.message) {
@@ -211,56 +243,68 @@ export default function VenueDetailPage() {
                     <span className="text-muted-foreground">/day</span>
                   </div>
 
-                  <form ref={formRef} action={dispatch} className="space-y-4">
-                    <input type="hidden" name="venueId" value={venue.id} />
-                    <div>
-                      <Label className="mb-2 block">Select a Date</Label>
-                      <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={setDate}
-                        className="rounded-md border p-0"
-                        disabled={disabledDates}
-                      />
-                       <input type="hidden" name="date" value={date?.toISOString()} />
-                         {state.errors?.date && (
-                        <p className="text-sm font-medium text-destructive pt-2">
-                         {state.errors.date[0]}
-                        </p>
-                      )}
+                  {!state.success ? (
+                    <form ref={formRef} action={dispatch} className="space-y-4">
+                      <input type="hidden" name="venueId" value={venue.id} />
+                      <div>
+                        <Label className="mb-2 block">Select a Date</Label>
+                        <Calendar
+                          mode="single"
+                          selected={date}
+                          onSelect={setDate}
+                          className="rounded-md border p-0"
+                          disabled={disabledDates}
+                        />
+                         <input type="hidden" name="date" value={date?.toISOString()} />
+                           {state.errors?.date && (
+                          <p className="text-sm font-medium text-destructive pt-2">
+                           {state.errors.date[0]}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <Label htmlFor="guests">Number of Guests</Label>
+                        <Input
+                          id="guests"
+                          name="guests"
+                          type="number"
+                          placeholder="e.g., 150"
+                          min="1"
+                          defaultValue={venue.capacity}
+                          
+                        />
+                         {state.errors?.guests && (
+                          <p className="text-sm font-medium text-destructive pt-2">
+                            {state.errors.guests[0]}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <Label htmlFor="message">Message (optional)</Label>
+                        <Textarea
+                          id="message"
+                          name="message"
+                          placeholder="Any special requests?"
+                        />
+                          {state.errors?.message && (
+                          <p className="text-sm font-medium text-destructive pt-2">
+                             {state.errors.message[0]}
+                          </p>
+                        )}
+                      </div>
+                      <SubmitButton />
+                    </form>
+                  ) : (
+                    <div className="text-center space-y-4 p-4 border-dashed border-2 border-primary/50 rounded-lg">
+                       <CheckCircle className="mx-auto h-12 w-12 text-primary" />
+                       <h3 className="text-xl font-semibold">Request Sent!</h3>
+                       <p className="text-muted-foreground">Your booking request has been successfully sent to the venue owner. You will be notified once it's confirmed.</p>
+                       <Button onClick={handlePayment} size="lg" className="w-full">
+                         <CreditCard className="mr-2 h-4 w-4" />
+                         Proceed to Payment
+                       </Button>
                     </div>
-                    <div>
-                      <Label htmlFor="guests">Number of Guests</Label>
-                      <Input
-                        id="guests"
-                        name="guests"
-                        type="number"
-                        placeholder="e.g., 150"
-                        min="1"
-                        defaultValue={venue.capacity}
-                        
-                      />
-                       {state.errors?.guests && (
-                        <p className="text-sm font-medium text-destructive pt-2">
-                          {state.errors.guests[0]}
-                        </p>
-                      )}
-                    </div>
-                    <div>
-                      <Label htmlFor="message">Message (optional)</Label>
-                      <Textarea
-                        id="message"
-                        name="message"
-                        placeholder="Any special requests?"
-                      />
-                        {state.errors?.message && (
-                        <p className="text-sm font-medium text-destructive pt-2">
-                           {state.errors.message[0]}
-                        </p>
-                      )}
-                    </div>
-                    <SubmitButton />
-                  </form>
+                  )}
                 </CardContent>
               </Card>
             </div>

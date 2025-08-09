@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/hooks/use-auth";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "BOOKMYVENUE",
@@ -32,6 +33,7 @@ export default function RootLayout({
             {children}
         </AuthProvider>
         <Toaster />
+        <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       </body>
     </html>
   );
