@@ -86,7 +86,11 @@ export const venues = [
     videoUrl: '',
     image: 'https://placehold.co/600x400.png',
     hint: 'manor exterior',
-    images: [{ src: "https://placehold.co/600x400.png", hint: 'manor exterior'}],
+    images: [
+        { src: "https://placehold.co/1200x800.png", hint: 'manor exterior'},
+        { src: "https://placehold.co/1200x800.png", hint: 'manor garden'},
+        { src: "https://placehold.co/1200x800.png", hint: 'manor interior'},
+    ],
     amenities: [],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'An elegant manor surrounded by ancient oak trees.'
@@ -104,7 +108,11 @@ export const venues = [
     videoUrl: '',
     image: 'https://placehold.co/600x400.png',
     hint: 'loft interior',
-    images: [{ src: "https://placehold.co/600x400.png", hint: 'loft interior'}],
+    images: [
+        { src: "https://placehold.co/1200x800.png", hint: 'loft interior'},
+        { src: "https://placehold.co/1200x800.png", hint: 'loft rooftop'},
+        { src: "https://placehold.co/1200x800.png", hint: 'loft bar'},
+    ],
     amenities: [],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'A modern and chic loft space for intimate events.'
@@ -122,7 +130,11 @@ export const venues = [
     videoUrl: '',
     image: 'https://placehold.co/600x400.png',
     hint: 'lake house',
-    images: [{ src: "https://placehold.co/600x400.png", hint: 'lake house'}],
+    images: [
+        { src: "https://placehold.co/1200x800.png", hint: 'lake house'},
+        { src: "https://placehold.co/1200x800.png", hint: 'lake view'},
+        { src: "https://placehold.co/1200x800.png", hint: 'house interior'},
+    ],
     amenities: [],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'A cozy retreat with stunning views of the lake.'
@@ -140,7 +152,11 @@ export const venues = [
     videoUrl: '',
     image: 'https://placehold.co/600x400.png',
     hint: 'pavilion night',
-    images: [{ src: "https://placehold.co/600x400.png", hint: 'pavilion night'}],
+    images: [
+        { src: "https://placehold.co/1200x800.png", hint: 'pavilion night'},
+        { src: "https://placehold.co/1200x800.png", hint: 'pavilion setup'},
+        { src: "https://placehold.co/1200x800.png", hint: 'pavilion lights'},
+    ],
     amenities: [],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'A grand pavilion perfect for large-scale events under the stars.'
@@ -158,7 +174,11 @@ export const venues = [
     priceDay: 1000,
     priceNight: 1500,
     capacity: 100,
-    images: [{ src: "https://placehold.co/600x400.png", hint: 'modern hall'}],
+    images: [
+        { src: "https://placehold.co/1200x800.png", hint: 'modern hall'},
+        { src: "https://placehold.co/1200x800.png", hint: 'hall stage'},
+        { src: "https://placehold.co/1200x800.png", hint: 'hall seating'},
+    ],
     amenities: [],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'A newly renovated hall in the heart of the city.'
@@ -176,7 +196,10 @@ export const venues = [
     priceDay: 500,
     priceNight: 500,
     capacity: 10,
-    images: [{ src: "https://placehold.co/600x400.png", hint: 'empty room'}],
+    images: [
+        { src: "https://placehold.co/1200x800.png", hint: 'empty room'},
+        { src: "https://placehold.co/1200x800.png", hint: 'blank space'},
+    ],
     amenities: [],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'This venue submission was not approved.'
