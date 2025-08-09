@@ -74,6 +74,7 @@ const venue = {
     email: "jane.doe@grandmeadow.com",
     phone: "+1 (555) 123-4567",
   },
+  bookedDates: [new Date('2024-08-15')],
 };
 
 function SubmitButton() {
@@ -112,6 +113,8 @@ export default function VenueDetailPage() {
       setDate(new Date());
     }
   }, [state, toast]);
+  
+  const disabledDates = [{ before: new Date() }, ...venue.bookedDates];
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -217,7 +220,7 @@ export default function VenueDetailPage() {
                         selected={date}
                         onSelect={setDate}
                         className="rounded-md border p-0"
-                        disabled={{ before: new Date() }}
+                        disabled={disabledDates}
                       />
                        <input type="hidden" name="date" value={date?.toISOString()} />
                          {state.errors?.date && (
