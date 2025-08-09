@@ -94,16 +94,22 @@ function SubmitButton() {
 export default function VenueDetailPage() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   
-  const initialState: State = { message: null, errors: {} };
+  const initialState: State = { message: null, errors: {}, success: false };
   const [state, dispatch] = useFormState(createBooking, initialState);
   const { toast } = useToast();
+  const formRef = React.useRef<HTMLFormElement>(null);
 
   React.useEffect(() => {
     if (state.message) {
       toast({
-        title: state.message,
-        variant: state.errors ? 'destructive' : 'default',
+        title: state.success ? "Success!" : "Oops!",
+        description: state.message,
+        variant: state.success ? 'default' : 'destructive',
       });
+    }
+    if (state.success) {
+      formRef.current?.reset();
+      setDate(new Date());
     }
   }, [state, toast]);
 
@@ -202,7 +208,7 @@ export default function VenueDetailPage() {
                     <span className="text-muted-foreground">/day</span>
                   </div>
 
-                  <form action={dispatch} className="space-y-4">
+                  <form ref={formRef} action={dispatch} className="space-y-4">
                     <input type="hidden" name="venueId" value={venue.id} />
                     <div>
                       <Label className="mb-2 block">Select a Date</Label>
@@ -211,6 +217,7 @@ export default function VenueDetailPage() {
                         selected={date}
                         onSelect={setDate}
                         className="rounded-md border p-0"
+                        disabled={{ before: new Date() }}
                       />
                        <input type="hidden" name="date" value={date?.toISOString()} />
                          {state.errors?.date && (
@@ -226,6 +233,7 @@ export default function VenueDetailPage() {
                         name="guests"
                         type="number"
                         placeholder="e.g., 150"
+                        min="1"
                         defaultValue={venue.capacity}
                         
                       />
@@ -249,11 +257,6 @@ export default function VenueDetailPage() {
                       )}
                     </div>
                     <SubmitButton />
-                     {state.message && (
-                      <p className="text-sm font-medium text-destructive pt-2">
-                        {state.message}
-                      </p>
-                    )}
                   </form>
                 </CardContent>
               </Card>

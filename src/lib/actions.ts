@@ -1,7 +1,6 @@
 'use server';
 
 import { z } from 'zod';
-import { redirect } from 'next/navigation';
 
 // Mock database check
 const existingBookings = [
@@ -16,11 +15,15 @@ export type State = {
     message?: string[];
   };
   message?: string | null;
+  success?: boolean;
 };
 
 const BookingSchema = z.object({
   venueId: z.coerce.number(),
-  date: z.coerce.date(),
+  date: z.coerce.date({
+    required_error: "Please select a date.",
+    invalid_type_error: "That's not a valid date!",
+  }),
   guests: z.coerce.number().gt(0, { message: 'Number of guests must be positive.' }),
   message: z.string().optional(),
 });
@@ -33,32 +36,41 @@ export async function createBooking(prevState: State, formData: FormData) {
     message: formData.get('message'),
   });
   
-  if (validatedFields.success) {
-    const { venueId, date } = validatedFields.data;
-
-    // Check for booking conflicts
-    const isBooked = existingBookings.some(
-      (booking) =>
-        booking.venueId === venueId &&
-        booking.date.toDateString() === date.toDateString()
-    );
-
-    if (isBooked) {
-      return {
-        errors: {},
-        message: 'This date is already booked for the selected venue. Please choose another date.',
-      };
-    }
-    
-    // In a real app, you would save the booking to a database here.
-    console.log('Booking created:', validatedFields.data);
-
-  } else {
+  if (!validatedFields.success) {
      return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Invalid data provided. Please check the form.',
+      success: false,
     };
   }
 
-  redirect(`/`);
+  const { venueId, date } = validatedFields.data;
+
+  // Check for booking conflicts
+  const isBooked = existingBookings.some(
+    (booking) =>
+      booking.venueId === venueId &&
+      booking.date.toDateString() === date.toDateString()
+  );
+
+  if (isBooked) {
+    return {
+      errors: {
+        date: ['This date is already booked. Please choose another.'],
+      },
+      message: 'Booking failed. The selected date is unavailable.',
+      success: false,
+    };
+  }
+  
+  // In a real app, you would save the booking to a database here.
+  console.log('Booking created:', validatedFields.data);
+  
+  existingBookings.push({ venueId, date });
+
+  return {
+    errors: {},
+    message: `Booking request for ${date.toLocaleDateString()} has been sent!`,
+    success: true,
+  }
 }
