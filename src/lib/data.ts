@@ -6,7 +6,7 @@ export const venues = [
     name: 'The Grand Meadow',
     type: 'Farmhouse',
     location: 'Sunnyvale, CA',
-    capacity: 200,
+    capacity: 2000000,
     price: 1500,
     status: 'Published',
     images: [
@@ -44,7 +44,7 @@ export const venues = [
     name: 'Crystal Ballroom',
     type: 'Function Hall',
     location: 'Metropolis, NY',
-    capacity: 300,
+    capacity: 3000000,
     price: 2500,
     status: 'Published',
     images: [
@@ -72,7 +72,7 @@ export const venues = [
     name: 'Oakwood Manor',
     type: 'Farmhouse',
     location: 'Greenwich, CT',
-    capacity: 150,
+    capacity: 1500000,
     price: 3000,
     status: 'Published',
     image: 'https://placehold.co/600x400.png',
@@ -105,7 +105,7 @@ export const venues = [
     name: 'Starlight Pavilion',
     type: 'Function Hall',
     location: 'Star City, TX',
-    capacity: 500,
+    capacity: 5000000,
     price: 4000,
     status: 'Published',
     image: 'https://placehold.co/600x400.png',
@@ -187,3 +187,4 @@ export const monthlyBookingsData = [
   { month: "May", bookings: 6 },
   { month: "Jun", bookings: 8 },
 ];
+

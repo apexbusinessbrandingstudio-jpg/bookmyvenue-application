@@ -20,7 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, X, Loader2 } from "lucide-react";
 import { db } from "@/lib/firebase";
-import { collection, getDocs, doc, updateDoc, query, onSnapshot, Timestamp } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, query, where, onSnapshot, Timestamp } from "firebase/firestore";
 import { useAuth } from "@/hooks/use-auth";
 
 type BookingStatus = "Pending" | "Approved" | "Rejected";
@@ -32,13 +32,19 @@ interface Booking {
   date: string;
   guests: number;
   status: BookingStatus;
+  venueId: string;
+}
+
+interface Venue {
+    id: string;
+    ownerId: string;
 }
 
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth(); // Assuming you have ownerId on venues to filter
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!user) {
@@ -46,28 +52,43 @@ export default function BookingsPage() {
       return;
     };
 
-    // In a real app, you'd likely query venues where ownerId === user.uid
-    // and then query bookings for those venueIds.
-    // For this example, we'll fetch all bookings.
-    const bookingsQuery = query(collection(db, "bookings"));
+    // 1. Get the IDs of venues owned by the current user
+    const venuesQuery = query(collection(db, "venues"), where("ownerId", "==", user.uid));
+    
+    const unsubscribeVenues = onSnapshot(venuesQuery, async (venuesSnapshot) => {
+        const ownedVenueIds = venuesSnapshot.docs.map(doc => doc.id);
 
-    const unsubscribe = onSnapshot(bookingsQuery, (querySnapshot) => {
-      const bookingsData = querySnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          venueName: data.venueName,
-          customerName: data.customerName,
-          date: (data.date as Timestamp).toDate().toLocaleDateString(),
-          guests: data.guests,
-          status: data.status,
-        } as Booking;
-      });
-      setBookings(bookingsData);
-      setLoading(false);
+        if (ownedVenueIds.length === 0) {
+            setBookings([]);
+            setLoading(false);
+            return;
+        }
+
+        // 2. Get bookings for those venues
+        const bookingsQuery = query(collection(db, "bookings"), where("venueId", "in", ownedVenueIds));
+        
+        const unsubscribeBookings = onSnapshot(bookingsQuery, (bookingsSnapshot) => {
+            const bookingsData = bookingsSnapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                id: doc.id,
+                venueName: data.venueName,
+                customerName: data.customerName,
+                date: (data.date as Timestamp).toDate().toLocaleDateString(),
+                guests: data.guests,
+                status: data.status,
+                venueId: data.venueId
+                } as Booking;
+            });
+            setBookings(bookingsData);
+            setLoading(false);
+        });
+        
+        return () => unsubscribeBookings();
     });
 
-    return () => unsubscribe();
+
+    return () => unsubscribeVenues();
 
   }, [user]);
 
@@ -117,8 +138,8 @@ export default function BookingsPage() {
             <TableBody>
               {bookings.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground">
-                    No booking requests found.
+                  <TableCell colSpan={6} className="text-center text-muted-foreground h-24">
+                    No booking requests found for your venues.
                   </TableCell>
                 </TableRow>
               ) : (
