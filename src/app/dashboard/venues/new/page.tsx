@@ -1,5 +1,9 @@
+
 "use client";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Card,
   CardContent,
@@ -9,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -19,8 +22,113 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { db } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { uploadFile } from "@/lib/storage";
+
+const formSchema = z.object({
+  name: z.string().min(1, "Venue name is required."),
+  type: z.string().min(1, "Venue type is required."),
+  location: z.string().min(1, "Location is required."),
+  description: z.string().min(1, "Description is required."),
+  capacity: z.coerce.number().min(1, "Capacity must be at least 1."),
+  price: z.coerce.number().min(1, "Price is required."),
+  rules: z.string().optional(),
+  images: z.any().refine((files) => files?.length > 0, "At least one image is required."),
+});
+
+type VenueFormValues = z.infer<typeof formSchema>;
 
 export default function NewVenuePage() {
+  const { toast } = useToast();
+  const router = useRouter();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
+
+  const form = useForm<VenueFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      type: "",
+      location: "",
+      description: "",
+      capacity: 0,
+      price: 0,
+      rules: "",
+      images: undefined,
+    },
+  });
+
+  const onSubmit = async (values: VenueFormValues) => {
+    if (!user) {
+      toast({
+        title: "Authentication Error",
+        description: "You must be logged in to create a venue.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setLoading(true);
+    try {
+      // 1. Create a new venue document to get an ID
+      const newVenueRef = await addDoc(collection(db, "venues"), {
+        ownerId: user.uid,
+        status: 'Draft',
+        createdAt: serverTimestamp(),
+        // Add other fields with empty/default values for now
+        name: values.name,
+        type: values.type,
+        location: values.location,
+        description: values.description,
+        capacity: values.capacity,
+        price: values.price,
+        rules: values.rules || "",
+        images: [], // will be populated after upload
+        amenities: [], // Add a default amenities array if needed
+      });
+      
+      const venueId = newVenueRef.id;
+
+      // 2. Upload images to Firebase Storage
+      const imageUrls = [];
+      for (const file of Array.from(values.images as FileList)) {
+        const url = await uploadFile(file, `venues/${venueId}`);
+        imageUrls.push({ src: url, hint: "new venue image" });
+      }
+
+      // 3. Update the venue document with the image URLs
+       await db.collection("venues").doc(venueId).update({ images: imageUrls });
+      
+
+      toast({
+        title: "Success!",
+        description: "Your venue has been submitted for review.",
+      });
+      router.push("/dashboard/venues");
+    } catch (error: any) {
+      toast({
+        title: "Error creating venue",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Card className="max-w-4xl mx-auto">
       <CardHeader>
@@ -32,92 +140,176 @@ export default function NewVenuePage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="space-y-8">
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium font-headline">Basic Information</h3>
-            <div className="space-y-2">
-              <Label htmlFor="name">Venue Name</Label>
-              <Input id="name" placeholder="e.g., The Grand Meadow" />
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="type">Venue Type</Label>
-                <Select>
-                  <SelectTrigger id="type">
-                    <SelectValue placeholder="Select a type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="farmhouse">Farmhouse</SelectItem>
-                    <SelectItem value="function-hall">Function Hall</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
-                <Input id="location" placeholder="e.g., Sunnyvale, CA" />
-              </div>
-            </div>
-          </div>
-
-          <Separator />
-          
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium font-headline">Details & Pricing</h3>
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                placeholder="Describe what makes your venue special..."
-                rows={5}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium font-headline">Basic Information</h3>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Venue Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., The Grand Meadow" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="capacity">Capacity</Label>
-                <Input
-                  id="capacity"
-                  type="number"
-                  placeholder="Maximum number of guests"
+              <div className="grid gap-6 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Venue Type</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Farmhouse">Farmhouse</SelectItem>
+                          <SelectItem value="Function Hall">Function Hall</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Location</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Sunnyvale, CA" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="price">Base Price (per day)</Label>
-                <Input id="price" type="number" placeholder="$" />
-              </div>
             </div>
-             <div className="space-y-2">
-              <Label htmlFor="rules">Venue Rules</Label>
-              <Textarea
-                id="rules"
-                placeholder="e.g., No smoking, no pets, etc."
-                rows={3}
+
+            <Separator />
+            
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium font-headline">Details & Pricing</h3>
+              <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          rows={5}
+                          placeholder="Describe what makes your venue special..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <FormField
+                    control={form.control}
+                    name="capacity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Capacity</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Maximum number of guests"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                <FormField
+                    control={form.control}
+                    name="price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Base Price (per day)</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="$" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+              </div>
+              <FormField
+                  control={form.control}
+                  name="rules"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Venue Rules</FormLabel>
+                       <FormControl>
+                        <Textarea
+                          id="rules"
+                          placeholder="e.g., No smoking, no pets, etc."
+                          rows={3}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+            </div>
+            
+            <Separator />
+
+            <div className="space-y-2">
+              <h3 className="text-lg font-medium font-headline">Media</h3>
+              <FormField
+                control={form.control}
+                name="images"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Upload Images</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="file" 
+                        multiple 
+                        accept="image/*"
+                        onChange={(e) => field.onChange(e.target.files)}
+                      />
+                    </FormControl>
+                    <p className="text-sm text-muted-foreground">
+                      Select one or more images of your venue.
+                    </p>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-          </div>
-          
-          <Separator />
 
-          <div className="space-y-2">
-            <h3 className="text-lg font-medium font-headline">Media</h3>
-            <Label htmlFor="images">Upload Images</Label>
-            <Input id="images" type="file" multiple />
-            <p className="text-sm text-muted-foreground">
-              Select one or more images of your venue.
-            </p>
-          </div>
-
-          <div className="flex justify-end">
-            <Button
-              type="submit"
-              size="lg"
-            >
-              Submit for Review
-            </Button>
-          </div>
-        </form>
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                size="lg"
+                disabled={loading}
+              >
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Submit for Review
+              </Button>
+            </div>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );
