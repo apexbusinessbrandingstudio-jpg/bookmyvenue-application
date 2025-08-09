@@ -11,6 +11,8 @@ export const availableAmenities = [
   { id: 'sound-system', name: 'Sound System' },
   { id: 'valet-parking', name: 'Valet Parking' },
   { id: 'in-house-decor', name: 'In-house Decor' },
+  { id: 'lift', name: 'Lift/Elevator' },
+  { id: 'dressing-room', name: 'Dressing Room' },
 ];
 
 export const venues = [
@@ -41,7 +43,7 @@ export const venues = [
     ],
     description:
       'A beautiful farmhouse set in acres of lush green meadows, perfect for weddings and corporate retreats. The Grand Meadow offers a serene escape from the city with modern amenities and breathtaking views.',
-    amenities: ['wifi', 'parking', 'catering', 'ac'],
+    amenities: ['wifi', 'parking', 'catering', 'ac', 'lift', 'dressing-room'],
     owner: {
       name: 'Jane Doe',
       email: 'jane.doe@grandmeadow.com',
@@ -67,7 +69,7 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: "ballroom chandeliers"},
     ],
     description: "A stunning ballroom with crystal chandeliers and a grand staircase, ideal for lavish weddings and formal events.",
-    amenities: ['valet-parking', 'in-house-decor', 'bridal-suite', 'sound-system'],
+    amenities: ['valet-parking', 'in-house-decor', 'bridal-suite', 'sound-system', 'lift'],
     owner: {
         name: "John Smith",
         email: "john.smith@crystalballroom.com",
