@@ -42,6 +42,12 @@ import {
   Moon,
   Hourglass,
   IndianRupee,
+  Wind,
+  Refrigerator,
+  Tv,
+  Users2,
+  Speaker,
+  Flower2
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { createBooking, type State } from '@/lib/actions';
@@ -49,7 +55,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { db } from "@/lib/firebase";
 import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
-import { venues as staticVenues } from "@/lib/data";
+import { venues as staticVenues, availableAmenities } from "@/lib/data";
 import { useParams } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
@@ -179,15 +185,21 @@ export default function VenueDetailPage() {
 
 
   const amenityIcons = {
-    'Free Wi-Fi': Wifi,
-    'On-site Parking': ParkingSquare,
-    'Catering Available': UtensilsCrossed,
-    'Outdoor Space': CheckCircle,
-    'Valet Parking': ParkingSquare,
-    'In-house Catering': UtensilsCrossed,
-    'Bridal Suite': CheckCircle,
-    'Sound System': CheckCircle,
+    'wifi': Wifi,
+    'parking': ParkingSquare,
+    'catering': UtensilsCrossed,
+    'ac': Wind,
+    'refrigerator': Refrigerator,
+    'tv': Tv,
+    'bridal-suite': Users2,
+    'sound-system': Speaker,
+    'valet-parking': ParkingSquare,
+    'in-house-decor': Flower2
   };
+  
+  const getAmenityDetails = (amenityId: string) => {
+      return availableAmenities.find(a => a.id === amenityId);
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -251,10 +263,12 @@ export default function VenueDetailPage() {
                 Amenities
               </h2>
               <div className="grid grid-cols-2 gap-4">
-                {(venue.amenities || []).map((amenity) => {
-                  const Icon = amenityIcons[amenity.name] || CheckCircle;
+                {(venue.amenities || []).map((amenityId) => {
+                  const amenity = getAmenityDetails(amenityId);
+                  if (!amenity) return null;
+                  const Icon = amenityIcons[amenity.id] || CheckCircle;
                   return (
-                    <div key={amenity.name} className="flex items-center">
+                    <div key={amenity.id} className="flex items-center">
                       <Icon className="mr-3 h-5 w-5 text-primary" />
                       <span>{amenity.name}</span>
                     </div>

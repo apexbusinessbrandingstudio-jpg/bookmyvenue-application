@@ -29,7 +29,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription
 } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -38,6 +40,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp, doc, updateDoc } from "firebase/firestore";
 import { uploadFile } from "@/lib/storage";
+import { availableAmenities } from "@/lib/data";
 
 const formSchema = z.object({
   name: z.string().min(1, "Venue name is required."),
@@ -52,6 +55,7 @@ const formSchema = z.object({
   rules: z.string().optional(),
   images: z.any().refine((files) => files?.length > 0, "At least one image is required."),
   video: z.any().optional(),
+  amenities: z.array(z.string()).optional(),
 }).refine(data => {
     if (data.type === 'Farmhouse') {
         return !!data.price12hr && !!data.price24hr;
@@ -85,6 +89,7 @@ export default function NewVenuePage() {
       rules: "",
       images: undefined,
       video: undefined,
+      amenities: [],
     },
   });
 
@@ -124,7 +129,7 @@ export default function NewVenuePage() {
         rules: values.rules || "",
         bookingOptions: bookingOptions,
         images: [],
-        amenities: [],
+        amenities: values.amenities || [],
         videoUrl: "",
       };
 
@@ -358,6 +363,62 @@ export default function NewVenuePage() {
                 />
             </div>
             
+            <Separator />
+            
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium font-headline">Amenities</h3>
+              <FormField
+                control={form.control}
+                name="amenities"
+                render={() => (
+                  <FormItem>
+                    <div className="mb-4">
+                      <FormLabel className="text-base">Available Amenities</FormLabel>
+                      <FormDescription>
+                        Select the amenities your venue offers.
+                      </FormDescription>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {availableAmenities.map((amenity) => (
+                      <FormField
+                        key={amenity.id}
+                        control={form.control}
+                        name="amenities"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={amenity.id}
+                              className="flex flex-row items-start space-x-3 space-y-0"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.includes(amenity.id)}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([...(field.value || []), amenity.id])
+                                      : field.onChange(
+                                          field.value?.filter(
+                                            (value) => value !== amenity.id
+                                          )
+                                        )
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                {amenity.name}
+                              </FormLabel>
+                            </FormItem>
+                          )
+                        }}
+                      />
+                    ))}
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <Separator />
 
             <div className="space-y-4">
