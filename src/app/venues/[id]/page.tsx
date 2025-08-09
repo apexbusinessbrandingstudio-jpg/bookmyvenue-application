@@ -51,7 +51,11 @@ import {
   PersonStanding,
   Beef,
   Vegan,
-  Drumstick
+  Drumstick,
+  Waves,
+  ToyBrick,
+  BedDouble,
+  Football,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { createBooking, type State } from '@/lib/actions';
@@ -87,6 +91,26 @@ const defaultVenue = {
 const ElevatorIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
         <rect width="18" height="18" x="3" y="3" rx="2"/><path d="m7 15 5-5 5 5"/><path d="M12 4v6"/>
+    </svg>
+)
+
+const BarbequeIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <path d="M4 20h16"/>
+        <path d="M6 16l-1.3 2.6A2 2 0 0 0 6.4 21H17.6a2 2 0 0 0 1.7-2.4L18 16"/>
+        <path d="M6 11h12"/>
+        <path d="M6 11v5"/>
+        <path d="M18 11v5"/>
+        <path d="M10 11V7"/>
+        <path d="M14 11V7"/>
+    </svg>
+)
+
+const ChildrensParkIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <path d="M5.2 2.7,13,2,11.5,5.5,14,7l-1.8,2.5,2.3,1.5L11,14.5,8,22,5,19l3.5-8L3,8.5,5.2,2.7Z"/>
+        <path d="m15.5 8-2.5 3 2.5 4"/>
+        <path d="M20 10c-2 0-4.5 1-4.5 3s2.5 3 4.5 3h1.5"/>
     </svg>
 )
 
@@ -209,6 +233,11 @@ export default function VenueDetailPage() {
     'in-house-decor': Flower2,
     'lift': ElevatorIcon,
     'dressing-room': PersonStanding,
+    'swimming-pool': Waves,
+    'children-park': ChildrensParkIcon,
+    'playground': Football,
+    'barbeque': BarbequeIcon,
+    'bedroom': BedDouble,
   };
   
   const menuIcons: { [key: string]: React.ElementType } = {
@@ -286,7 +315,7 @@ export default function VenueDetailPage() {
               <h2 className="mb-4 font-headline text-2xl font-bold">
                 Amenities
               </h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                 {(venue.amenities || []).map((amenityId) => {
                   const amenity = getAmenityDetails(amenityId);
                   if (!amenity) return null;

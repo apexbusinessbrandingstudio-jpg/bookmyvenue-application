@@ -13,6 +13,11 @@ export const availableAmenities = [
   { id: 'in-house-decor', name: 'In-house Decor' },
   { id: 'lift', name: 'Lift/Elevator' },
   { id: 'dressing-room', name: 'Dressing Room' },
+  { id: 'swimming-pool', name: 'Swimming Pool' },
+  { id: 'children-park', name: 'Children\'s Park' },
+  { id: 'playground', name: 'Playing Ground' },
+  { id: 'barbeque', name: 'Barbeque' },
+  { id: 'bedroom', name: 'Bedroom' },
 ];
 
 export const menuOptions = [
@@ -50,7 +55,7 @@ export const venues = [
     ],
     description:
       'A beautiful farmhouse set in acres of lush green meadows, perfect for weddings and corporate retreats. The Grand Meadow offers a serene escape from the city with modern amenities and breathtaking views.',
-    amenities: ['wifi', 'parking', 'catering', 'ac', 'lift', 'dressing-room'],
+    amenities: ['wifi', 'parking', 'catering', 'ac', 'lift', 'dressing-room', 'swimming-pool', 'playground', 'bedroom'],
     menuOptions: ['veg', 'non-veg'],
     owner: {
       name: 'Jane Doe',
@@ -105,7 +110,7 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: 'estate garden party'},
         { src: "https://placehold.co/1200x800.png", hint: 'manor library interior'},
     ],
-    amenities: ['wifi', 'parking', 'ac', 'tv'],
+    amenities: ['wifi', 'parking', 'ac', 'tv', 'bedroom', 'barbeque'],
     menuOptions: ['veg'],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'An elegant manor surrounded by ancient oak trees.'
@@ -151,7 +156,7 @@ export const venues = [
         { src: "https://placehold.co/1200x800.png", hint: 'mountain lake view'},
         { src: "https://placehold.co/1200x800.png", hint: 'cozy house interior'},
     ],
-    amenities: ['wifi', 'parking', 'refrigerator'],
+    amenities: ['wifi', 'parking', 'refrigerator', 'bedroom', 'children-park'],
     menuOptions: ['veg', 'non-veg'],
     owner: { name: 'N/A', email: '', phone: '' },
     description: 'A cozy retreat with stunning views of the lake.'
