@@ -10,27 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import Image from "next/image";
 import { Plus, Edit, Bot, View } from "lucide-react";
-
-const myVenues = [
-  {
-    id: 1,
-    name: "The Grand Meadow",
-    type: "Farmhouse",
-    location: "Sunnyvale, CA",
-    status: "Published",
-    image: "https://placehold.co/600x400.png",
-    hint: "farmhouse field",
-  },
-  {
-    id: 7,
-    name: "My New Hall",
-    type: "Function Hall",
-    location: "City Center",
-    status: "Draft",
-    image: "https://placehold.co/600x400.png",
-    hint: "modern hall",
-  },
-];
+import { venues as myVenues } from "@/lib/data";
 
 export default function MyVenuesPage() {
   return (

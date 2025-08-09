@@ -29,39 +29,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-
-const monthlyBookingsData = [
-  { month: "Jan", bookings: 4 },
-  { month: "Feb", bookings: 3 },
-  { month: "Mar", bookings: 5 },
-  { month: "Apr", bookings: 7 },
-  { month: "May", bookings: 6 },
-  { month: "Jun", bookings: 8 },
-];
-
-const recentBookings = [
-  {
-    id: 1,
-    venueName: "The Grand Meadow",
-    customerName: "Alice Johnson",
-    date: "2024-09-15",
-    status: "Approved",
-  },
-  {
-    id: 2,
-    venueName: "My New Hall",
-    customerName: "Charlie Brown",
-    date: "2024-11-01",
-    status: "Pending",
-  },
-  {
-    id: 3,
-    venueName: "The Grand Meadow",
-    customerName: "Diana Prince",
-    date: "2024-11-12",
-    status: "Pending",
-  },
-];
+import { bookings as recentBookings, monthlyBookingsData } from "@/lib/data";
 
 export default function DashboardPage() {
   return (
@@ -162,7 +130,7 @@ export default function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {recentBookings.map((booking) => (
+                {recentBookings.slice(0, 5).map((booking) => (
                   <TableRow key={booking.id}>
                     <TableCell className="font-medium">{booking.venueName}</TableCell>
                     <TableCell>

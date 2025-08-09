@@ -42,43 +42,23 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { db } from "@/lib/firebase";
 import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
+import { venues } from "@/lib/data";
+import { useParams } from "next/navigation";
 
 
-const venue = {
-  id: 1,
-  name: "The Grand Meadow",
-  type: "Farmhouse",
-  location: "Sunnyvale, CA",
-  capacity: 200,
-  price: 1500,
-  images: [
-    {
-      src: "https://placehold.co/1200x800.png",
-      hint: "farmhouse field",
-    },
-    {
-      src: "https://placehold.co/1200x800.png",
-      hint: "farmhouse interior",
-    },
-    {
-      src: "https://placehold.co/1200x800.png",
-      hint: "farmhouse garden",
-    },
-  ],
-  description:
-    "A beautiful farmhouse set in acres of lush green meadows, perfect for weddings and corporate retreats. The Grand Meadow offers a serene escape from the city with modern amenities and breathtaking views.",
-  amenities: [
-    { name: "Free Wi-Fi", icon: Wifi },
-    { name: "On-site Parking", icon: ParkingSquare },
-    { name: "Catering Available", icon: UtensilsCrossed },
-    { name: "Outdoor Space", icon: CheckCircle },
-  ],
-  owner: {
-    name: "Jane Doe",
-    email: "jane.doe@grandmeadow.com",
-    phone: "+1 (555) 123-4567",
-  },
+const defaultVenue = {
+  id: 0,
+  name: "Venue Not Found",
+  type: "N/A",
+  location: "N/A",
+  capacity: 0,
+  price: 0,
+  images: [{ src: "https://placehold.co/1200x800.png", hint: "placeholder" }],
+  description: "The venue you are looking for could not be found.",
+  amenities: [],
+  owner: { name: "N/A", email: "", phone: "" },
 };
+
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -96,6 +76,10 @@ function SubmitButton() {
 }
 
 export default function VenueDetailPage() {
+  const params = useParams();
+  const venueId = Number(params.id);
+  const venue = venues.find((v) => v.id === venueId) || defaultVenue;
+
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [bookedDates, setBookedDates] = React.useState<Date[]>([]);
   const { user } = useAuth();
@@ -116,7 +100,9 @@ export default function VenueDetailPage() {
       const dates = querySnapshot.docs.map(doc => (doc.data().date as Timestamp).toDate());
       setBookedDates(dates);
     }
-    fetchBookedDates();
+    if (venue.id !== 0) {
+      fetchBookedDates();
+    }
   }, [venue.id]);
 
 
@@ -170,6 +156,17 @@ export default function VenueDetailPage() {
   
   const disabledDates = [{ before: new Date() }, ...bookedDates];
 
+  const amenityIcons = {
+    'Free Wi-Fi': Wifi,
+    'On-site Parking': ParkingSquare,
+    'Catering Available': UtensilsCrossed,
+    'Outdoor Space': CheckCircle,
+    'Valet Parking': ParkingSquare,
+    'In-house Catering': UtensilsCrossed,
+    'Bridal Suite': CheckCircle,
+    'Sound System': CheckCircle,
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -214,12 +211,15 @@ export default function VenueDetailPage() {
                 Amenities
               </h2>
               <div className="grid grid-cols-2 gap-4">
-                {venue.amenities.map((amenity) => (
-                  <div key={amenity.name} className="flex items-center">
-                    <amenity.icon className="mr-3 h-5 w-5 text-primary" />
-                    <span>{amenity.name}</span>
-                  </div>
-                ))}
+                {venue.amenities.map((amenity) => {
+                  const Icon = amenityIcons[amenity.name] || CheckCircle;
+                  return (
+                    <div key={amenity.name} className="flex items-center">
+                      <Icon className="mr-3 h-5 w-5 text-primary" />
+                      <span>{amenity.name}</span>
+                    </div>
+                  );
+                })}
               </div>
               
               <Separator className="my-8" />

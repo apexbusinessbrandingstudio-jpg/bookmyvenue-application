@@ -24,70 +24,8 @@ import Link from "next/link";
 import { MapPin, Users, DollarSign, Search } from "lucide-react";
 import { Slider } from "@/components/ui/slider"
 import React from "react";
+import { venues } from "@/lib/data";
 
-// Mock data for venues
-const venues = [
-  {
-    id: 1,
-    name: "The Grand Meadow",
-    type: "Farmhouse",
-    location: "Sunnyvale, CA",
-    capacity: 200,
-    price: 1500,
-    image: "https://placehold.co/600x400.png",
-    hint: "farmhouse field",
-  },
-  {
-    id: 2,
-    name: "Crystal Ballroom",
-    type: "Function Hall",
-    location: "Metropolis, NY",
-    capacity: 300,
-    price: 2500,
-    image: "https://placehold.co/600x400.png",
-    hint: "ballroom wedding",
-  },
-  {
-    id: 3,
-    name: "Oakwood Manor",
-    type: "Farmhouse",
-    location: "Greenwich, CT",
-    capacity: 150,
-    price: 3000,
-    image: "https://placehold.co/600x400.png",
-    hint: "manor exterior",
-  },
-  {
-    id: 4,
-    name: "The City Loft",
-    type: "Function Hall",
-    location: "Downtown, LA",
-    capacity: 100,
-    price: 1800,
-    image: "https://placehold.co/600x400.png",
-    hint: "loft interior",
-  },
-  {
-    id: 5,
-    name: "Lakeside Retreat",
-    type: "Farmhouse",
-    location: "Lake Tahoe, NV",
-    capacity: 80,
-    price: 2200,
-    image: "https://placehold.co/600x400.png",
-    hint: "lake house",
-  },
-  {
-    id: 6,
-    name: "Starlight Pavilion",
-    type: "Function Hall",
-    location: "Star City, TX",
-    capacity: 500,
-    price: 4000,
-    image: "https://placehold.co/600x400.png",
-    hint: "pavilion night",
-  },
-];
 
 export default function Home() {
     const [priceRange, setPriceRange] = React.useState([1000, 4000])
