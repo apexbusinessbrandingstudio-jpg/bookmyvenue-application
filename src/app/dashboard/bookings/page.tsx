@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import {
   Card,
   CardHeader,
@@ -17,7 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 
-const bookings = [
+const initialBookings = [
   {
     id: 1,
     venueName: "The Grand Meadow",
@@ -52,7 +55,19 @@ const bookings = [
   },
 ];
 
+type BookingStatus = "Pending" | "Approved" | "Rejected";
+
 export default function BookingsPage() {
+  const [bookings, setBookings] = useState(initialBookings);
+
+  const handleUpdateStatus = (bookingId: number, newStatus: BookingStatus) => {
+    setBookings(
+      bookings.map((booking) =>
+        booking.id === bookingId ? { ...booking, status: newStatus } : booking
+      )
+    );
+  };
+
   return (
     <div className="space-y-8">
       <h1 className="text-4xl font-bold font-headline">My Bookings</h1>
@@ -83,7 +98,9 @@ export default function BookingsPage() {
                   </TableCell>
                   <TableCell>{booking.customerName}</TableCell>
                   <TableCell>{booking.date}</TableCell>
-                  <TableCell className="text-center">{booking.guests}</TableCell>
+                  <TableCell className="text-center">
+                    {booking.guests}
+                  </TableCell>
                   <TableCell>
                     <Badge
                       variant={
@@ -93,7 +110,11 @@ export default function BookingsPage() {
                           ? "secondary"
                           : "destructive"
                       }
-                      className={booking.status === "Approved" ? "bg-primary text-primary-foreground" : ""}
+                      className={
+                        booking.status === "Approved"
+                          ? "bg-primary text-primary-foreground"
+                          : ""
+                      }
                     >
                       {booking.status}
                     </Badge>
@@ -101,7 +122,12 @@ export default function BookingsPage() {
                   <TableCell className="text-right">
                     {booking.status === "Pending" && (
                       <div className="flex justify-end gap-2">
-                        <Button variant="outline" size="icon" className="h-8 w-8">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => handleUpdateStatus(booking.id, "Approved")}
+                        >
                           <Check className="h-4 w-4" />
                           <span className="sr-only">Approve</span>
                         </Button>
@@ -109,6 +135,7 @@ export default function BookingsPage() {
                           variant="destructive"
                           size="icon"
                           className="h-8 w-8"
+                          onClick={() => handleUpdateStatus(booking.id, "Rejected")}
                         >
                           <X className="h-4 w-4" />
                           <span className="sr-only">Reject</span>
