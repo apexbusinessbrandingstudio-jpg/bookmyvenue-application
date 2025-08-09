@@ -1,6 +1,10 @@
+"use client"
+
 import Link from "next/link";
 import { Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { UserNav } from "./UserNav";
+import { AuthProvider } from "@/hooks/use-auth";
 
 export function Header() {
   return (
@@ -16,12 +20,9 @@ export function Header() {
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
-            <Button variant="ghost" asChild>
-              <Link href="/login">Login</Link>
-            </Button>
-            <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
-              <Link href="/signup">Sign Up</Link>
-            </Button>
+            <AuthProvider>
+              <UserNav />
+            </AuthProvider>
              <Button variant="outline" asChild>
               <Link href="/dashboard">Dashboard</Link>
             </Button>
