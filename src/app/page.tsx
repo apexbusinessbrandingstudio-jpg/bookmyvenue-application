@@ -99,7 +99,7 @@ export default function Home() {
         <section
           className="relative flex h-[50vh] max-h-[560px] items-center justify-center bg-cover bg-center text-center"
           style={{ backgroundImage: "url('https://placehold.co/1600x600.png')" }}
-          data-ai-hint="venue exterior"
+          data-ai-hint="wedding reception"
         >
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="relative
