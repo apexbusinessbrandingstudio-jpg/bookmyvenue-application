@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useFormState, useFormStatus } from "react-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import {
@@ -35,6 +36,9 @@ import {
   Phone,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { createBooking, type State } from '@/lib/actions';
+import { useToast } from "@/hooks/use-toast";
+
 
 const venue = {
   id: 1,
@@ -72,8 +76,36 @@ const venue = {
   },
 };
 
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      size="lg"
+      className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
+      disabled={pending}
+      aria-disabled={pending}
+    >
+      {pending ? "Sending..." : "Send Booking Request"}
+    </Button>
+  );
+}
+
 export default function VenueDetailPage() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
+  
+  const initialState: State = { message: null, errors: {} };
+  const [state, dispatch] = useFormState(createBooking, initialState);
+  const { toast } = useToast();
+
+  React.useEffect(() => {
+    if (state.message) {
+      toast({
+        title: state.message,
+        variant: state.errors ? 'destructive' : 'default',
+      });
+    }
+  }, [state, toast]);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -170,39 +202,58 @@ export default function VenueDetailPage() {
                     <span className="text-muted-foreground">/day</span>
                   </div>
 
-                  <div>
-                    <Label className="mb-2 block">Check Availability</Label>
-                    <Calendar
-                      mode="single"
-                      selected={date}
-                      onSelect={setDate}
-                      className="rounded-md border p-0"
-                    />
-                  </div>
-
-                  <form className="space-y-4">
+                  <form action={dispatch} className="space-y-4">
+                    <input type="hidden" name="venueId" value={venue.id} />
+                    <div>
+                      <Label className="mb-2 block">Select a Date</Label>
+                      <Calendar
+                        mode="single"
+                        selected={date}
+                        onSelect={setDate}
+                        className="rounded-md border p-0"
+                      />
+                       <input type="hidden" name="date" value={date?.toISOString()} />
+                         {state.errors?.date && (
+                        <p className="text-sm font-medium text-destructive pt-2">
+                         {state.errors.date[0]}
+                        </p>
+                      )}
+                    </div>
                     <div>
                       <Label htmlFor="guests">Number of Guests</Label>
                       <Input
                         id="guests"
+                        name="guests"
                         type="number"
                         placeholder="e.g., 150"
                         defaultValue={venue.capacity}
+                        
                       />
+                       {state.errors?.guests && (
+                        <p className="text-sm font-medium text-destructive pt-2">
+                          {state.errors.guests[0]}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <Label htmlFor="message">Message (optional)</Label>
                       <Textarea
                         id="message"
+                        name="message"
                         placeholder="Any special requests?"
                       />
+                        {state.errors?.message && (
+                        <p className="text-sm font-medium text-destructive pt-2">
+                           {state.errors.message[0]}
+                        </p>
+                      )}
                     </div>
-                    <Button
-                      size="lg"
-                      className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
-                    >
-                      Send Booking Request
-                    </Button>
+                    <SubmitButton />
+                     {state.message && (
+                      <p className="text-sm font-medium text-destructive pt-2">
+                        {state.message}
+                      </p>
+                    )}
                   </form>
                 </CardContent>
               </Card>

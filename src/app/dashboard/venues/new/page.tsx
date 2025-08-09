@@ -113,7 +113,6 @@ export default function NewVenuePage() {
             <Button
               type="submit"
               size="lg"
-              className="bg-accent text-accent-foreground hover:bg-accent/90"
             >
               Submit for Review
             </Button>
