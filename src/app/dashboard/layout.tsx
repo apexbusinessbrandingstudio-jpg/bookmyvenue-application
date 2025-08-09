@@ -1,3 +1,6 @@
+
+'use client'
+
 import Link from "next/link";
 import {
   SidebarProvider,
@@ -10,12 +13,28 @@ import {
 } from "@/components/ui/sidebar";
 import { Building2, LayoutDashboard, Settings, CalendarCheck } from "lucide-react";
 import { Header } from "@/components/Header";
+import { useAuth } from "@/hooks/use-auth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && (!user || user.role !== 'owner')) {
+      router.push('/login/owner');
+    }
+  }, [user, loading, router]);
+  
+  if (loading || !user || user.role !== 'owner') {
+      return null; // Or a loading spinner
+  }
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen flex-col">

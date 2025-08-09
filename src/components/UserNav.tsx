@@ -61,9 +61,11 @@ export function UserNav() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push('/dashboard')}>
-          Dashboard
-        </DropdownMenuItem>
+        {user.role === 'owner' && (
+          <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+            Dashboard
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>
           Settings
         </DropdownMenuItem>
