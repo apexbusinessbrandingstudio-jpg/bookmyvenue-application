@@ -2,7 +2,7 @@
 "use client";
 
 import * as React from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import {
@@ -92,7 +92,7 @@ export default function VenueDetailPage() {
   const { user } = useAuth();
   
   const initialState: State = { message: null, errors: {}, success: false };
-  const [state, dispatch] = useFormState(createBooking, initialState);
+  const [state, dispatch] = React.useActionState(createBooking, initialState);
   const { toast } = useToast();
   const formRef = React.useRef<HTMLFormElement>(null);
   
