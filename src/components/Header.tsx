@@ -17,10 +17,13 @@ export function Header() {
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
             <Button variant="ghost" asChild>
-              <Link href="/dashboard">Venue Owners</Link>
+              <Link href="/login">Login</Link>
             </Button>
             <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
-              <Link href="/dashboard/venues/new">List your Venue</Link>
+              <Link href="/signup">Sign Up</Link>
+            </Button>
+             <Button variant="outline" asChild>
+              <Link href="/dashboard">Dashboard</Link>
             </Button>
           </nav>
         </div>
