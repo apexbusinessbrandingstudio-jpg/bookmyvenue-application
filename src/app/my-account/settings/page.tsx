@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-export default function OwnerSettingsPage() {
+export default function SettingsPage() {
   return (
     <div className="space-y-8">
       <h1 className="text-4xl font-bold font-headline">Settings</h1>

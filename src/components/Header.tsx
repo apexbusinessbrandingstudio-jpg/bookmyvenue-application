@@ -23,7 +23,12 @@ export function Header() {
             <UserNav />
             {user?.role === 'owner' && (
                <Button variant="outline" asChild>
-                <Link href="/dashboard">Dashboard</Link>
+                <Link href="/dashboard">Owner Dashboard</Link>
+              </Button>
+            )}
+             {user?.role === 'customer' && (
+               <Button variant="outline" asChild>
+                <Link href="/my-account">My Bookings</Link>
               </Button>
             )}
           </nav>

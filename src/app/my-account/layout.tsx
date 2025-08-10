@@ -11,14 +11,14 @@ import {
   SidebarMenuButton,
   SidebarInset,
 } from "@/components/ui/sidebar";
-import { Building2, LayoutDashboard, Settings, CalendarCheck } from "lucide-react";
+import { User, Settings, CalendarCheck } from "lucide-react";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
-export default function DashboardLayout({
+export default function CustomerDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -27,12 +27,12 @@ export default function DashboardLayout({
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'owner')) {
-      router.push('/login/owner');
+    if (!loading && (!user || user.role !== 'customer')) {
+      router.push('/login/customer');
     }
   }, [user, loading, router]);
   
-  if (loading || !user || user.role !== 'owner') {
+  if (loading || !user || user.role !== 'customer') {
       return (
          <div className="flex items-center justify-center h-screen">
             <Loader2 className="h-8 w-8 animate-spin" />
@@ -50,23 +50,7 @@ export default function DashboardLayout({
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild variant="ghost">
-                    <Link href="/dashboard">
-                      <LayoutDashboard />
-                      Dashboard
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild variant="ghost">
-                    <Link href="/dashboard/venues">
-                      <Building2 />
-                      My Venues
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild variant="ghost">
-                    <Link href="/dashboard/bookings">
+                    <Link href="/my-account">
                       <CalendarCheck />
                       My Bookings
                     </Link>
@@ -74,7 +58,7 @@ export default function DashboardLayout({
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild variant="ghost">
-                    <Link href="/dashboard/settings">
+                    <Link href="/my-account/settings">
                       <Settings />
                       Settings
                     </Link>
@@ -93,3 +77,4 @@ export default function DashboardLayout({
     </SidebarProvider>
   );
 }
+
