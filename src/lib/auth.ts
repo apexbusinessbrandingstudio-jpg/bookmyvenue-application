@@ -10,14 +10,14 @@ import {
   type User as FirebaseAuthUser,
 } from 'firebase/auth';
 import { auth, db } from './firebase';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp, query, collection, where, getDocs } from 'firebase/firestore';
 
 
 export interface User extends FirebaseAuthUser {
   role?: 'owner' | 'customer';
 }
 
-export const signUp = async (email, password, name, role: 'owner' | 'customer') => {
+export const signUp = async (email, password, name, role: 'owner' | 'customer', phone?: string) => {
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
   const user = userCredential.user;
   
@@ -27,6 +27,7 @@ export const signUp = async (email, password, name, role: 'owner' | 'customer') 
     await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
       email: user.email,
+      phone: phone || null,
       displayName: name,
       role: role,
       createdAt: serverTimestamp()
@@ -45,8 +46,32 @@ export const resendVerificationEmail = async () => {
     }
 }
 
-export const signIn = (email, password) => {
-  return signInWithEmailAndPassword(auth, email, password);
+export const signIn = async (identifier, password) => {
+  // Check if identifier is an email or phone number
+  if (identifier.includes('@')) {
+    // It's an email
+    return signInWithEmailAndPassword(auth, identifier, password);
+  } else {
+    // It's a phone number, we need to find the user's email first
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("phone", "==", identifier));
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      throw new Error("No user found with this mobile number.");
+    }
+    
+    // Assuming phone numbers are unique, so we take the first result
+    const userDoc = querySnapshot.docs[0];
+    const userData = userDoc.data();
+    const email = userData.email;
+
+    if (!email) {
+        throw new Error("No email associated with this mobile number.");
+    }
+
+    return signInWithEmailAndPassword(auth, email, password);
+  }
 };
 
 export const signOut = () => {

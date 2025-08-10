@@ -34,10 +34,16 @@ import { auth } from "@/lib/firebase";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { MailCheck } from "lucide-react";
 import { sendEmailVerification } from "firebase/auth";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address." }),
+  email: z.string().email({ message: "Invalid email address." }).optional(),
+  phone: z.string().optional(),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+}).refine(data => data.email || data.phone, {
+    message: "Email or phone number is required.",
+    path: ['email'],
 });
 
 export default function OwnerLoginPage() {
@@ -45,20 +51,31 @@ export default function OwnerLoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showVerificationAlert, setShowVerificationAlert] = useState(false);
+  const [loginMethod, setLoginMethod] = useState("email");
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
+      phone: ""
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     setShowVerificationAlert(false);
+
+    const identifier = loginMethod === 'email' ? values.email : values.phone;
+     if (!identifier) {
+        toast({ title: "Error", description: "Please provide an email or phone number.", variant: "destructive" });
+        setLoading(false);
+        return;
+    }
+
     try {
-      const userCredential = await signIn(values.email, values.password);
+      const userCredential = await signIn(identifier, values.password);
        if (!userCredential.user.emailVerified) {
           await auth.signOut();
           setShowVerificationAlert(true);
@@ -84,8 +101,10 @@ export default function OwnerLoginPage() {
   const handleResendVerification = async () => {
       setLoading(true);
       try {
+           const identifier = loginMethod === 'email' ? form.getValues("email") : form.getValues("phone");
+           if (!identifier) return;
           // Temporarily sign in to get user object, then sign out
-          const userCredential = await signIn(form.getValues("email"), form.getValues("password"));
+          const userCredential = await signIn(identifier, form.getValues("password"));
           if (userCredential.user) {
               await sendEmailVerification(userCredential.user);
               toast({
@@ -114,7 +133,7 @@ export default function OwnerLoginPage() {
           <CardHeader>
             <CardTitle className="text-2xl font-headline">Venue Owner Login</CardTitle>
             <CardDescription>
-              Enter your email below to login to your dashboard.
+              Enter your credentials below to login to your dashboard.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -135,40 +154,64 @@ export default function OwnerLoginPage() {
                     </Button>
                 </Alert>
             ) : (
-                <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                            <Input placeholder="m@example.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-                    <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                            <Input type="password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-                    <Button type="submit" className="w-full" disabled={loading}>
-                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Sign In
-                    </Button>
-                </form>
-                </Form>
+                <Tabs value={loginMethod} onValueChange={setLoginMethod} className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="email">Email</TabsTrigger>
+                        <TabsTrigger value="phone">Mobile</TabsTrigger>
+                    </TabsList>
+                    <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
+                         <TabsContent value="email" className="space-y-4 m-0">
+                            <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="m@example.com" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                            />
+                        </TabsContent>
+                         <TabsContent value="phone" className="space-y-4 m-0">
+                            <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Mobile Number</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="9876543210" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                            />
+                        </TabsContent>
+
+                        <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                                <Input type="password" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                        <Button type="submit" className="w-full" disabled={loading}>
+                        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Sign In
+                        </Button>
+                    </form>
+                    </Form>
+                </Tabs>
              )}
           </CardContent>
           <CardFooter className="flex-col items-start">
