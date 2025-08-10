@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
   onAuthStateChanged,
+  sendEmailVerification,
   type User as FirebaseAuthUser,
 } from 'firebase/auth';
 import { auth, db } from './firebase';
@@ -22,6 +23,7 @@ export const signUp = async (email, password, name, role: 'owner' | 'customer') 
   
   // Now, store the user's role and other details in Firestore
   if (user) {
+    await sendEmailVerification(user); // Send verification email
     await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
       email: user.email,
@@ -33,6 +35,15 @@ export const signUp = async (email, password, name, role: 'owner' | 'customer') 
   
   return userCredential;
 };
+
+export const resendVerificationEmail = async () => {
+    const user = auth.currentUser;
+    if (user) {
+        await sendEmailVerification(user);
+    } else {
+        throw new Error("No user is currently signed in to resend verification email.");
+    }
+}
 
 export const signIn = (email, password) => {
   return signInWithEmailAndPassword(auth, email, password);

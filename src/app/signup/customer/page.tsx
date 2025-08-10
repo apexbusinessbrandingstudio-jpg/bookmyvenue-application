@@ -30,6 +30,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { MailCheck } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
@@ -41,6 +43,8 @@ export default function CustomerSignupPage() {
   const { toast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [showVerificationInfo, setShowVerificationInfo] = useState(false);
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,11 +59,7 @@ export default function CustomerSignupPage() {
     setLoading(true);
     try {
       await signUp(values.email, values.password, values.name, 'customer');
-      toast({
-        title: "Success!",
-        description: "Your account has been created.",
-      });
-      router.push("/");
+      setShowVerificationInfo(true);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -83,6 +83,18 @@ export default function CustomerSignupPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {showVerificationInfo ? (
+                <Alert>
+                    <MailCheck className="h-4 w-4" />
+                    <AlertTitle>Account Created!</AlertTitle>
+                    <AlertDescription>
+                        We've sent a verification link to your email address. Please check your inbox and click the link to activate your account.
+                    </AlertDescription>
+                    <Button asChild className="mt-4 w-full">
+                        <Link href="/login/customer">Proceed to Login</Link>
+                    </Button>
+                </Alert>
+            ): (
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
@@ -130,6 +142,7 @@ export default function CustomerSignupPage() {
                 </Button>
               </form>
             </Form>
+            )}
           </CardContent>
           <CardFooter className="flex-col items-start">
             <div className="mt-4 text-center text-sm w-full">
